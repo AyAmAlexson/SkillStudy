@@ -1,4 +1,4 @@
-
+import time
 
 def init_field(n=3):   #Инициализируем чистое игровое поле
     ch=["0", "A", "B", "C"]
@@ -28,9 +28,7 @@ def make_move_player(field,char):
             print ("Неверный ввод поля, повторите ввод")
 
 
-def make_move_cpu(field,cpu_char,player_char):
-
-    
+def make_move_cpu(field,char):
 
     for i in range (1,4):
         for j in range (1,4):
@@ -74,7 +72,10 @@ def gameplay(field,player_turn):
             else:
                 player_turn = not player_turn
         else:
-            field = make_move_cpu(field, cpu_char,player_char)
+            print("Думаю...")
+            time.sleep(2)
+            field = make_move_cpu(field, cpu_char)
+
             if check_win(field):
                 return 2
             elif check_full(field):
