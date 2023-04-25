@@ -2,6 +2,51 @@ import random as r
 import time
 from ShipsDistribution import SHIPS_DISTR
 
+class Ship:  # Класс корабля
+    x, y = None, None  # Координаты на доске
+    _horizontal = None  # Ориентация (вертикально/горизонтально)
+    _size = None  # Размер корабля
+    _body = None  # Корпус корабля - список клеток. при пробитии одной из клеток соответствующий символ корпуса будет изменяться
+
+    def __init__(self, size):
+        self._size = size
+        self._body = ["◼" for i in range(size)]
+
+    @property
+    def get_body(self):
+        return self._body
+
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
+
+    def set_orientation(self, hor):
+        self._horizontal = hor
+
+    @property
+    def is_horizontal(self):
+        return self._horizontal
+
+    @property
+    def get_x_position(self):
+        return self.x
+
+    @property
+    def get_y_position(self):
+        return self.y
+
+    @property
+    def get_size(self):
+        return self._size
+
+    def set_tile(self, tile, sign):
+        self._body[tile] = sign
+
+    def is_destroyed(self):
+        for tile in self._body:
+            if tile == "◼":
+                return False
+        return True
 
 class Player:
     _ship_set = None
@@ -16,7 +61,7 @@ class Player:
         self._ship_set = []
         for ship_size in SHIPS_DISTR[game_size]:  # Набор кораблей для этого размера поля забираем из константы в файле ShipsDistribution
             new_ship = Ship(ship_size)  # Создаем объекты класса Корабль разного размера
-            self._ship_set.append(new_ship)  # Добавляем в список кораблей игрока
+            self._ship_set.append(new_ship)  # Добавляем созданный корабль в список кораблей игрока
 
     def random_placement(self, game_size):  # Метод для рандомной расстановки кораблей
         while True:  # Иногда возникают такие ситуации, когда не выходит расставить все корабли по правилам, тк не хватает места.
@@ -47,6 +92,25 @@ class Player:
         print("Список всех кораблей, расставленных на карте:")
         for ship in self._ship_set:
             print("".join(ship.get_body))
+
+    def outline_killed_ship(self, ship:Ship):
+        x = ship.get_x_position
+        y = ship.get_y_position
+        ship_size = ship.get_size
+        for i in range(-1,ship_size+1):
+            for j in range(-1,2):
+                try:
+                    if not ship.is_horizontal:
+                        if self._vs_board.status()[x+j][y+i] == "☐":
+                            self._vs_board.set_tile(x + j,y + i,"◈")
+                    else:
+                        if self._vs_board.status()[x + i][y + j] == "☐":
+                            self._vs_board.set_tile(x + i,y + j ,"◈")
+
+                except (Exception):
+                    pass
+
+
 
     @staticmethod
     def check_on_board(ship, board):  # Статический метод проверки на возможность поставить корабль с такими координатами
@@ -115,11 +179,15 @@ class Player:
             if ship.is_horizontal:
                 if ship.get_y_position == y and (ship.get_x_position <= x <= ship.get_x_position + ship.get_size):
                     ship.set_tile(x - ship.get_x_position, "☒")
+                    return ship
+
                 pass
             else:
                 if ship.get_x_position == x and (ship.get_y_position <= y <= ship.get_y_position + ship.get_size):
                     ship.set_tile(y - ship.get_y_position, "☒")
+                    return ship
                 pass
+
 
     def is_defeated(self):
         defeat = True
@@ -183,7 +251,7 @@ class User(Player):
         else:
             raise OutOfBounds
 
-    def move(self, opponent_board):
+    def move(self, opponent_board, opponent_ship_set):
         while True:
             try:
                 x, y = self.ask()
@@ -200,45 +268,6 @@ class User(Player):
                     return 2, x, y
 
 
-class Ship:  # Класс корабля
-    x, y = None, None  # Координаты на доске
-    _horizontal = None  # Ориентация (вертикально/горизонтально)
-    _size = None  # Размер корабля
-    _body = None  # Корпус корабля - список клеток. при пробитии одной из клеток соответствующий символ корпуса будет изменяться
-
-    def __init__(self, size):
-        self._size = size
-        self._body = ["◼" for i in range(size)]
-
-    @property
-    def get_body(self):
-        return self._body
-
-    def set_position(self, x, y):
-        self.x = x
-        self.y = y
-
-    def set_orientation(self, hor):
-        self._horizontal = hor
-
-    @property
-    def is_horizontal(self):
-        return self._horizontal
-
-    @property
-    def get_x_position(self):
-        return self.x
-
-    @property
-    def get_y_position(self):
-        return self.y
-
-    @property
-    def get_size(self):
-        return self._size
-
-    def set_tile(self, tile, sign):
-        self._body[tile] = sign
 
 
 class Game:  # Класс игры
@@ -258,10 +287,10 @@ class Game:  # Класс игры
         self._cpu = CPU(True, self._game_size)
         self._user_turn = bool(r.getrandbits(1))  # Пока первый ход определяется рандомно
 
-
     def welcome_text(self):
         print("\n\n\n\n--- ДОБРО ПОЖАЛОВАТЬ В ИГРУ BATTLE SHIPS CONSOLE ---")
         print("-------------------- Версия 1.2 --------------------")
+        print("__________________ © AyAmAlexson -------------------")
         print("\n\n                         __/___")
         print("                   _____/______|")
         print("           _______/_____\_______\_____")
@@ -269,21 +298,18 @@ class Game:  # Класс игры
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
     def set_level(self):
-        print("\n\nВведите размер поля (от 2, что соответствует размеру 2х2, до 26, что соответствует размеру 26х26).")
+        print("\n\nВведи размер поля (от 2, что соответствует размеру 2х2, до 26, что соответствует размеру 26х26).")
         print("Количество кораблей в игре будет зависеть от размера поля.")
         print("Чем больше поле, тем сложнее и дольше игра.")
         while True:
             try:
-                result = int(input ("Введите желаемый размер поля:"))
+                result = int(input ("Введи желаемый размер поля:"))
                 if 2 <= result <= 26:
                     return result
                 else:
-                    print("Неверный ввод, проверьте, что вводите целое число от от 2 до 26")
+                    print("Неверный ввод, проверь, что вводишь целое число от от 2 до 26")
             except Exception:
-                print("Неверный ввод, проверьте, что вводите целое число от от 2 до 26")
-
-
-
+                print("Неверный ввод, проверь, что вводишь целое число от от 2 до 26")
 
     def start(self):
         self.game_play()
@@ -310,9 +336,9 @@ class Game:  # Класс игры
     def ceremony(self):
         print('\n')
         if self._winner == 1:
-            print("Поздравляем, Вы победили!")
+            print("Поздравляем, ты победил!")
         elif self._winner == 2:
-            print("Сожалеем, Вы проиграли!")
+            print("Сожалеем, ты проиграл!")
         else:
             print("Что-то странное случилось, не знаю, кто победил")
 
@@ -322,11 +348,10 @@ class Game:  # Класс игры
         self.print_boards()
 
         while not self._winner:
-
             if self._user_turn:
                 print("\nТвой ход...\n")
                 time.sleep(1)
-                move, x, y = self._user.move(self._cpu.my_board)
+                move, x, y = self._user.move(self._cpu.my_board,self._cpu._ship_set)
 
                 if move == 1:
                     print("\n\n-------------МИМО!-------------\n\n")
@@ -337,9 +362,11 @@ class Game:  # Класс игры
                 elif move == 2:
                     print("\n\n==============ПОПАДАНИЕ!================\n\n")
                     time.sleep(2)
+                    hitship = self._cpu.ship_is_hit(x, y)
+                    if hitship.is_destroyed():
+                        self._user.outline_killed_ship(hitship)
+                        print("\n\n++++++++++++++++++УБИЛ!++++++++++++++++++\n\n")
                     self.print_boards()
-                    self._cpu.ship_is_hit(x, y)
-
                     if self._cpu.is_defeated():
                         self._winner = 1
 
@@ -364,6 +391,10 @@ class Game:  # Класс игры
                     print("\n\n==============ПОПАДАНИЕ!================\n\n")
                     time.sleep(2)
                     self._user.ship_is_hit(x, y)
+                    hitship = self._user.ship_is_hit(x, y)
+                    if hitship.is_destroyed():
+                        self._cpu.outline_killed_ship(hitship)
+                        print("\n\n++++++++++++++++++УБИЛ!++++++++++++++++++\n\n")
                     self.print_boards()
                     if self._user.is_defeated():
                         self._winner = 2
