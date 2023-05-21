@@ -1,1 +1,1 @@
-tg_bot_token = "5736045603:AAFE8xks-BJypsFzYA3YF9rxLSnCc279uys"
+tg_bot_token = "YOUR TOKEN"
