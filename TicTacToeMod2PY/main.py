@@ -14,7 +14,7 @@ def print_field(field):  # Распечатываем игровое поле
     print('\n'.join('\t'.join(map(str, row)) for row in field))  # Вывести матрицу красиво
 
 
-def make_move_player(field, char):     #функция запуска хода игрока
+def make_move_player(field, char):     # функция запуска хода игрока
     cols = ["a", "b", "c"]
     rows = ["1", "2", "3"]
     while True:
@@ -31,7 +31,7 @@ def make_move_player(field, char):     #функция запуска хода �
             print("Неверный ввод поля, повторите ввод")
 
 
-def make_move_cpu(field, char):  #функция запуска хода AI
+def make_move_cpu(field, char):  # функция запуска хода AI
     for i in range(1, 4):
         for j in range(1, 4):
             if field[i][j] == "-":
