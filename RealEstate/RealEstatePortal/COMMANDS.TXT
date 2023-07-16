@@ -1,0 +1,260 @@
+Команды для заполнения БД находятся внизу этого файла, но до этого прошу прочесть комментарий ниже
+
+Чтобы курс был максимально полезным, я самостоятельно решил заменить суть упражнения D5.9 на более подходящий для меня проект.
+Вместо новостного портала я создаю проект портала по аренде недвижимости на Мальте (базу данных объектов недвижимости), тк это для меня представляет практическую ценность.
+
+Я обеспечу выполнение всех приемов и требований из исходного задания, но мои модели будут называться иначе и описывать другие элементы и связи реального мира.
+
+Пример:
+Автор -> заменен на Агент
+Статья -> объект недвижимости
+Заказ -> просмотр (недвижимости клиентом)
+
+Также будут дополнительные сущности, которые необходимы для этого проекта, но аналогов в исходном задании нет. То есть я сделал чуть больше:
+Владелец (недвижимости)
+Клиент (арендатор)
+Контракт
+
+и тп
+
+Также будут аналогичные связи разных типов один-к-одному, один-ко-многим, многие-ко-многим, все это я также заложу в мой проект
+
+Надеюсь, в таком виде вы примете мое задание.
+Ниже я буду пояснять, что на что я заменил, чтобы можно было оценить задание и проверить, что выполнено все необходимое
+
+Итого чеклист по пунктам задания:
+
+- Модель Author - DONE - модель Agents (агенты, вносящие новые записи по недвижимости, назначающие просмотры клиентам, заключающие контракты, закрывающие сделки)
+- cвязь «один к одному» с встроенной моделью пользователей User; - DONE - отличие, что мне пришлось создать дополнительный класс CustomUser,
+который расширяет класс User, добавляя строчку с номером телефона, тк это обязательное для работы поле. И уже с этим классом я реализовал связь one-to-one
+- рейтинг пользователя - DONE - вместо рейтинга по смыслу я добавил количество заключенных сделок и общий объем сгенерированной выручки
+
+Модель Category - DONE - модель Features (характеристики объекта, по которым можно искать - такие как наличие балкона, вид на море, наличие кондиционера)
+ - Единственное поле, должно быть уникальным - DONE
+
+Модель Post - DONE - модель ResProperties - объекты недвижимости. Каждый объект может иметь ноль, одну или несколько Features.
+
+Соответственно, модель должна включать следующие поля:
+ - связь «один ко многим» с моделью Author; - DONE модель связана с моделью Agents (агент добавляет новую запись в базу данных и является ответственным за нее), а также с моделью Owners (владелец квартиры) - один ко многим
+ - поле с выбором — «статья» или «новость»; - DONE поле с выбором дивизиона "частная (аренда)", "коммерческая (аренда)" и "продажа" недвижимости (это соответствует реальным дивизионам)
+ - автоматически добавляемая дата и время создания; - DONE, но время тут не нужно, только дата создания, этого достаточно
+ - связь «многие ко многим» с моделью Category (с дополнительной моделью PostCategory); - DONE - с моделью Features через PropertiesFeatures
+ - заголовок статьи/новости; - DONE - Тут несколько основных полей характеристик для объекта недвижимости - Локация, количество спален, тип объекта
+ - текст статьи/новости; - DONE - текстовое описание объекта недвижимости
+ - рейтинг статьи/новости - DONE - цена, те месячная стоимость аренды
+
+Модель PostCategory Промежуточная модель для связи «многие ко многим»: - DONE модель PropertiesFeatures
+ - связь «один ко многим» с моделью Post; - DONE - связь с моделью ResProperties
+ - связь «один ко многим» с моделью Category. - DONE - связь с моделью Features
+
+
+Модель Comment - DONE - модель Comments
+Под каждой новостью/статьёй можно оставлять комментарии, поэтому необходимо организовать их способ хранения тоже.
+Модель будет иметь следующие поля:
+ - связь «один ко многим» с моделью Post; - DONE - связь один ко многим с моделью ResProperties
+ - связь «один ко многим» со встроенной моделью User (комментарии может оставить любой пользователь, необязательно автор); - DONE - тут отличие, в данной системе комментарии могут оставлять только агенты для агентов, сторонные пользователи не должны их видеть. поэтому тут сделал связь с Agents
+ - текст комментария; - DONE
+ - дата и время создания комментария; DONE
+ - рейтинг комментария. - это поле пришлось опустить, тк эти коментарии рабочие и скрыты, поэтому оценивать их нет смысла
+
+Также есть модели поверх объема задания:
+
+Модель Owners - владельцы недвижимости, их контакты
+Модель Client - арендаторы, клиенты агентства, их контакты
+
+Модель Viewings - описывает просмотры, о которых договариваются агент и клиент в отношении объекта недвижимости
+Поля:
+ - связь один ко многим с моделью ResProperties - просмотр какого объекта назначается
+ - связь один ко многим с моделью Agents - какой агент назначает
+ - свзяь один ко многим с моделью Clients - какокй клиент будет просматривать
+ - поле даты просмотра
+
+Модель Contracts контракты - описывает заключенные сделки по аренде(продаже) недвижимости - не буду перечислять все поля
+
+Далее по заданию:
+Эти модели должны также реализовать методы:
+
+1. Методы like() и dislike() в моделях Comment и Post, -DONE-  Заменил на методы make_on_the_market и make_off_the_market - которые меняют статус объекта недвижимости (доступен/недоступен, и ожидаемую дату), а также метод move_the_date, который просто двигает дату контроля доступности объекта недвижимости
+2. Метод preview() модели Post, - DONE - preview модели ResProperties выводит краткое описание объекта недвижимости
+3. Метод update_rating() модели Author, заменил на геттер и сеттер стоимости объекта недвижимости
++  Добавил метод close_contract(value) в модель Agents - дополнение статистике агента по количеству заключенных контрактов и сгенерированной прибыли
+
+КОМАНДЫ:
+
+
+Создать двух пользователей (с помощью метода User.objects.create_user('username')):
+cu1 = CustomUser.objects.create_user('Adam_Erhan')
+cu2 = CustomUser.objects.create_user('Maria_Fernanda')
+cu3 = CustomUser.objects.create_user('Andrew_Young')
+cu4 = CustomUser.objects.create_user('Jamie_Bezzina')
+
+cu1.first_name="Adam"
+cu1.last_name="Erhan"
+cu1.save()
+cu2.first_name="Maria"
+cu2.last_name="Fernanda"
+cu2.save()
+cu3.first_name="Andrew"
+cu3.last_name="Young"
+cu3.save()
+cu4.first_name="Jamie"
+cu4.last_name="Bezzina"
+cu4.save()
+
+
+Создать два объекта модели Author, связанные с пользователями:
+Agents.objects.create(user_id=CustomUser.objects.get(id=1))
+Agents.objects.create(user_id=CustomUser.objects.get(id=2))
+Agents.objects.create(user_id=CustomUser.objects.get(id=3))
+Agents.objects.create(user_id=CustomUser.objects.get(id=4))
+
+Owners.objects.create(owner_ql_id = "ON12312", activated=True, first_name="Victor", last_name="Galea", phone_1="+35611111111",email="vg123@gmail.com", added_by=Agents.objects.get(id=2))
+Owners.objects.create(owner_ql_id = "ON9253", activated=True, first_name="Josef", last_name="Borg", phone_1="+35622222222",email="jbjbjbjb123@gmail.com", added_by=Agents.objects.get(id=3))
+(тут ссылаемся именно на Агента, а не на юзера: потому, что только Агенты могут добавлять информацию и любые записи в бд)
+
+Clients.objects.create(first_name="Anna", last_name="Ivanova", phone_1="+79121234567",email="annaivanova2341124@gmail.com", added_by=Agents.objects.get(id=1))
+Clients.objects.create(first_name="Petr", last_name="Petrov", phone_1="+79879876543",email="pepetrov12983798@gmail.com", added_by=Agents.objects.get(id=3))
+(тут ссылаемся именно на Агента, а не на юзера: потому, что только Агенты могут добавлять информацию и любые записи в бд)
+
+Добавить 4 категории в модель Category: (сделал больше в соответствующую модель Fatures)
+
+Features.objects.create(prop_feature='Sea View')
+Features.objects.create(prop_feature='Terrace')
+Features.objects.create(prop_feature='Yard')
+Features.objects.create(prop_feature='Balcony')
+Features.objects.create(prop_feature='Air Conditioning')
+Features.objects.create(prop_feature='Town View')
+Features.objects.create(prop_feature='Seafront')
+Features.objects.create(prop_feature='Dishwasher')
+Features.objects.create(prop_feature='Open Plan')
+Features.objects.create(prop_feature='A-Ultra Modern')
+Features.objects.create(prop_feature='B-Modern')
+Features.objects.create(prop_feature='C-Standard')
+Features.objects.create(prop_feature='Furnished')
+
+
+Добавить 2 статьи и 1 новость: (добавил 2 объекта недвижимости для аренды и 1 для продажи
+
+prop1 = ResProperties.objects.create(ref = 75349, prop_division='QL',prop_type="Apartments", location="Marsaskala", area="South", address="3 Flat 10, Triq St Peter, Marsaskala, Malta", link = "https://www.quicklets.com.mt/property-detail/75150", _price=1200.0,status ='AV', status_valid='Available',bedrooms=2,bathrooms=2, prop_description = 'MARSASKALA - A duplex two-bedroom apartment with an additional multi-purpose room, located less than a five-minute way from the Marsaskala promenade.', owner=Owners.objects.get(id=1),added_by=Agents.objects.get(id=3))
+prop2 = ResProperties.objects.create(ref = 41147, prop_division='QL',prop_type="Penthouses", location="St. Julians", area="Central", address="55 Flat 18, Triq Manwel Dimech, St. Julians, Malta", link = "https://www.quicklets.com.mt/property-detail/40948", _price=2000.0,status ='AV', status_valid='Available',bedrooms=3,bathrooms=2, prop_description = "SAINT JULIAN'S - Here we find a stunning penthouse overlooking the town with amenities very close by such as restaurants, grocers, and a bus stop.", owner=Owners.objects.get(id=2),added_by=Agents.objects.get(id=4))
+prop3 = ResProperties.objects.create(ref = 15273, prop_division='ZH',prop_type="Penthouses", location="Valletta", area="Central", address="1 Flat 1, Triq San Gwann, Valletta, Malta", link = "https://www.quicklets.com.mt/property-detail/15074", _price=450000.0,status ='AV', status_valid='Available',bedrooms=2,bathrooms=2, prop_description = "Found in a quiet street in Valletta, one finds this brand new designer finished, and furnished penthouse that upon entering, boasts a very bright open plan kitchen/living area with great space and a small terrace enjoying some sea views. ", owner=Owners.objects.get(id=1),added_by=Agents.objects.get(id=1))
+
+Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий)
+
+SeaView = Features.objects.get(prop_feature='Sea View')
+Modern = Features.objects.get(prop_feature='B-Modern')
+UModern = Features.objects.get(prop_feature='A-Ultra Modern')
+Standard = Features.objects.get(prop_feature='C-Standard')
+AC = Features.objects.get(prop_feature='Air Conditioning')
+Yard = Features.objects.get(prop_feature='Yard')
+Terrace = Features.objects.get(prop_feature='Terrace')
+Balcony = Features.objects.get(prop_feature='Balcony')
+Furnished = Features.objects.get(prop_feature='Furnished')
+
+prop1.prop_features.add(SeaView)
+prop1.prop_features.add(Terrace)
+prop1.prop_features.add(Modern)
+prop1.prop_features.add(Furnished)
+
+prop2.prop_features.add(Yard)
+prop2.prop_features.add(AC)
+prop2.prop_features.add(Standard)
+prop2.prop_features.add(Furnished)
+
+prop3.prop_features.add(Balcony)
+prop3.prop_features.add(SeaView)
+prop3.prop_features.add(UModern)
+prop3.prop_features.add(Furnished)
+
+Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий):
+
+c1 = Comments.objects.create(re_property = prop1, added_by = Agents.objects.get(id=3), comment = "To call end of July, as the current tennants still lives there")
+c2 = Comments.objects.create(re_property = prop1, added_by = Agents.objects.get(id=4), comment = "There is a large construction site across the road, too noisy, be aware")
+c3 = Comments.objects.create(re_property = prop2, added_by = Agents.objects.get(id=1), comment = "Old furniture, not enough light, pets are accepted")
+c4 = Comments.objects.create(re_property = prop3, added_by = Agents.objects.get(id=2), comment = "The enramce is from the backstreet, there is also a view on St.Johns Cathedral")
+
+Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов:
+prop1.price = 1250
+prop3.price = 460000
+
+Далее имитируем случай, когда агент провел успешный просмотр собственности с клиентом и заключил контракт на аренду на 1 год:
+
+Сначала назначим просмотр:
+client1 = Clients.objects.get(first_name = "Anna", last_name="Ivanova")
+agent_rented = Agents.objects.get(id=3)
+prop1 = ResProperties.objects.get(ref=75349)
+view1 = Viewings.objects.create(re_property = prop1, client = client1, agent=agent_rented, date = "2023-07-17")
+
+Потом заключим контракт:
+contract1 = Contracts.objects.create(re_property= prop1, client=client1, agent=agent_rented, move_in_date = "2023-08-01", sign_date="2023-07-17", final_price = 1150.0, af_paid=True, deposit_paid=True, contract_signed = True)
+
+Ставим пометку off_the_market и убираем из доступных вариантов
+prop1.make_off_the_market("2023-07-17")
+
+Финально запишем это в статистику агента: (аналог строки в задании "Обновить рейтинги пользователей")
+agent_rented.close_contract(1150)
+
+Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта): будем выводить самых успешных агентов по количеству и по сумме сгенерированной выручки:
+
+для начала создадим историю
+agent1 = Agents.objects.get(id=1)
+agent2 = Agents.objects.get(id=2)
+agent3 = Agents.objects.get(id=3)
+agent4 = Agents.objects.get(id=4)
+
+agent1.close_contract(1750)
+agent3.close_contract(750)
+agent2.close_contract(600)
+agent3.close_contract(2000)
+agent2.close_contract(1600)
+agent1.close_contract(1000)
+agent1.close_contract(1250)
+agent3.close_contract(750)
+agent4.close_contract(800)
+agent4.close_contract(950)
+agent4.close_contract(1300)
+agent1.close_contract(1100)
+agent2.close_contract(1300)
+agent2.close_contract(1000)
+agent4.close_contract(2200)
+agent3.close_contract(750)
+agent3.close_contract(750)
+agent3.close_contract(1750)
+agent4.close_contract(1200)
+agent4.close_contract(3800)
+agent1.close_contract(1750)
+
+top_contracts_agent = Agents.objects.all().order_by('contracts_closed').last()
+f'{top_contracts_agent}: {top_contracts_agent.contracts_closed} contracts closed'
+
+top_revenue_agent = Agents.objects.all().order_by('revenue_generated').last()
+f'{top_revenue_agent}: €{top_revenue_agent.revenue_generated} revenue generated'
+
+Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+- тут выведу информацию по самой дорогой сданной в аренду недвижимости
+
+для этого сдадим еще одну квартиру(заключим контакт)
+prop2 = ResProperties.objects.get(ref=41147)
+client2 = Clients.objects.get(first_name = "Petr", last_name="Petrov")
+agent_rented2 = Agents.objects.get(id=3)
+contract2 = Contracts.objects.create(re_property= prop2, client=client2, agent=agent_rented2, move_in_date = "2023-09-01", sign_date="2023-07-22", final_price = 2100.0, af_paid=True, deposit_paid=True, contract_signed = True)
+prop2.make_off_the_market("2023-07-22")
+
+
+отсортируем контракты по стоимости и выведем информацию по самому дорогому
+top_contract = Contracts.objects.all().order_by('final_price').last()
+top_property = top_contract.re_property
+f'Top contract: №{top_contract.id} signed on {top_contract.sign_date} between {top_property.owner.first_name} {top_property.owner.last_name} as Lessor and {top_contract.client.first_name} {top_contract.client.last_name} as Lessee with {top_contract.agent} as Witness regarding the property: {top_property.preview()}'
+
+Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье
+import pprint
+coms = list(Comments.objects.all().values('comment','re_property','added_on','added_by'))
+for comment in coms:
+    print("\n")
+    comment['added_by'] = str(Agents.objects.get(id = comment['added_by']))
+    prop = ResProperties.objects.get(id = comment['re_property'])
+    comment['re_property'] = prop.preview()
+    comment['added_on'] = comment['added_on'].strftime("%d %B %Y %I:%M%p")
+    pprint.pprint(comment)
+
+
