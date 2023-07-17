@@ -1,0 +1,12 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Real Estate Portal - Properties
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все объекты -->
+{% block content %}
+<h1>All properties</h1>
+{{ resproperties }}
+{% endblock content %}

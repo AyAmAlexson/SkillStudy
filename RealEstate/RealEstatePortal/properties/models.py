@@ -140,6 +140,9 @@ class ResProperties(models.Model):
         self._price = value
         self.save()
 
+    def __str__(self):
+        return f'REF {self.ref} - {self.bedrooms}-bedroom {self.prop_type} in {self.location}.'
+
 
 class PropertiesFeatures(models.Model):
     re_property = models.ForeignKey(ResProperties, on_delete=models.CASCADE)
