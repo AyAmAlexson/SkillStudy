@@ -1,0 +1,80 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load custom_tags %}
+
+
+{% block content %}
+<h1>Property search</h1>
+<hr>
+<table style="width:100%" class="table">
+    <tr>
+        <td width="40%">
+            <form action="" method="get" align="right" >
+                {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+                {{ filterset.form.as_p }}
+                {# Добавим кнопку отправки данных формы #}
+
+                <input type="submit" value="Search" />
+
+
+            </form>
+        </td>
+        <td></td>
+
+    </tr>
+</table>
+
+<hr>
+   {% if resproperties_search %}
+       <table style="width:100%" class="table">
+           <tr>
+               <th>Division</th>
+               <th>Reference Number</th>
+               <th>Description</th>
+               <th>Price</th>
+               <th>Status</th>
+               <th><a href = "?{% if order == 'desc' %}{% url_replace order='asc' %}{% else %}{% url_replace order='desc' %}{% endif%}">Added on</a> </th>
+           </tr>
+
+           {% for resproperty in resproperties_search %}
+           <tr>
+
+               <td>{% if resproperty.prop_division == 'QL' %}  For Rent - Residential   {% elif resproperty.prop_division == 'QC' %} For Rent - Commercial {% else %} For Sale {% endif %}</td>
+               <td> <a href="{{ resproperty.ref|ql_link }}" target='_blank'>REF {{resproperty.ref}}</a></td>
+               <td>{{ resproperty|minus_ref }}</td>
+               <td>{{ resproperty.price|currency:"eur" }}</td>
+               <td>{% if resproperty.status == 'AV' %}  Available   {% else %} Contact the Agent {% endif %}</td>
+               <td>{{ resproperty.date_added }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>No properties!</h2>
+   {% endif %}
+
+   {# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number%}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+
+{% endblock content %}

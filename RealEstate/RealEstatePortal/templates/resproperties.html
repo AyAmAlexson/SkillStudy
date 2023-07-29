@@ -9,32 +9,37 @@ Real Estate Properties
 
 {% block content %}
    <h1>All properties</h1>
-   <!--<h3>{{ time_now|date:'M d Y' }}</h3> -->
+
    <h6>{% current_time '%b %d %Y' %}</h6>
    <h6> {{ resproperties|length }} properties in total </h6>
+
+   {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+   <form action="" method="get" align="right">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Quick Search" />
+
+
+   </form>
    <hr>
    {% if resproperties %}
        <table style="width:100%" class="table">
            <tr>
-               <td>Division</td>
-               <td>Description</td>
-               <td>Price</td>
-               <td>Status</td>
-               <td>Added on</td>
+               <th>Division</th>
+               <th>REF (Click to open)</th>
+               <th>Description</th>
+               <th>Price</th>
+               <th>Status</th>
+               <th><a href = "?{% if order == 'desc' %}{% url_replace order='asc' %}{% else %}{% url_replace order='desc' %}{% endif%}">Added on</a> </th>
            </tr>
 
-           <!-- Для каждого товара будете генерироваться новая строчка,
-           т.е. новый HTML код, который указан в теле цикла.
-           При этом сам цикл работает точно так же, как и в Python.
-           product — переменная цикла, т.е. наш товар полученный из списка -->
-           {% for resproperty in resproperties reversed %}
+           {% for resproperty in resproperties %}
            <tr>
-               <!-- Не забываем, что переменные в шаблоне ничем не отличаются
-                от переменных в Python. Здесь также можно получать доступ к
-                полям объекта модели. Например, здесь мы выводим имя,
-                в следующем столбце описание, и т.д.  -->
+
                <td>{% if resproperty.prop_division == 'QL' %}  For Rent - Residential   {% elif resproperty.prop_division == 'QC' %} For Rent - Commercial {% else %} For Sale {% endif %}</td>
-               <td>{{ resproperty.bedrooms }}-bedroom {{ resproperty.prop_type }} in {{ resproperty.location }}</td>
+               <td> <a href="{{ resproperty.id }}" target='_blank'>REF {{resproperty.ref}}</a></td>
+               <td>{{ resproperty|minus_ref }}</td>
                <td>{{ resproperty.price|currency:"eur" }}</td>
                <td>{% if resproperty.status == 'AV' %}  Available   {% else %} Contact the Agent {% endif %}</td>
                <td>{{ resproperty.date_added }}</td>
@@ -45,4 +50,37 @@ Real Estate Properties
    {% else %}
        <h2>No properties!</h2>
    {% endif %}
+
+   {# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number%}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+<br>
+       <form action="" align = "left" width="150">
+           <input type="button"  value="Add Residential Property" onclick="window.location.href='residential/create/';"/>
+           <input type="button"  value="Add Property for Sale" onclick="window.location.href='sales/create/';"/>
+           <input type="button"  value="Add Commercial Property" onclick="window.location.href='commercial/create/';"/>
+       </form>
+<br>
+<br>
+<a href="http://www.nooo.me/"> Noooo! </a>
+
 {% endblock content %}

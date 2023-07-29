@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.urls import reverse
+from .misc import AREAS_LIST
 from datetime import *
 
 rented = 'RE'
@@ -56,6 +57,8 @@ class Owners(models.Model):
     added_by = models.ForeignKey(Agents, on_delete=models.SET_NULL, null=True)
     date_added = models.DateField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
 
 class Clients(models.Model):
     first_name = models.CharField(max_length=30)
@@ -71,24 +74,26 @@ class Clients(models.Model):
 class Features(models.Model):
     prop_feature = models.CharField(max_length=32, unique=True)
 
+    def __str__(self):
+        return f'{self.prop_feature}'
+
 
 class ResProperties(models.Model):
     ref = models.IntegerField(unique=True)
     prop_division = models.CharField(max_length=2,choices=PROP_DIVISION, default='QL')
     prop_type = models.CharField(max_length=25)
     location = models.CharField(max_length=25)
-    area = models.CharField(max_length=15)
     address = models.TextField(null=True)
-    link = models.URLField()
+    link = models.URLField(null=True)
     _price = models.FloatField(default=0.0, db_column="Price")
     status = models.CharField(max_length=2, choices=PROP_STATUSES, default='RE')
-    status_valid = models.CharField(max_length=25)
+    status_valid = models.CharField(max_length=25,null=True)
     off_the_market = models.BooleanField(default=False)
     bedrooms = models.IntegerField()
     bathrooms = models.IntegerField(default=0)
 
-    prop_features = models.ManyToManyField(Features, through='PropertiesFeatures')
-    prop_description = models.TextField()
+    prop_features = models.ManyToManyField(Features, through='PropertiesFeatures', null=True)
+    prop_description = models.TextField(null=True)
 
     date_added = models.DateField(auto_now_add=True)
     date_rented = models.DateField(null=True)
@@ -104,6 +109,9 @@ class ResProperties(models.Model):
     def exiref(self):
         return f'e-{str(oct(self.ref))[2:]}'
 
+    @property
+    def area(self):
+        return f'{AREAS_LIST[self.location]}'
 
     def preview(self):
         return f'REF {self.ref} - {self.bedrooms}-bedroom {self.prop_type} in {self.location}.'
@@ -141,7 +149,15 @@ class ResProperties(models.Model):
         self.save()
 
     def __str__(self):
-        return f'REF {self.ref} - {self.bedrooms}-bedroom {self.prop_type} in {self.location}.'
+        if self.prop_division=="QL":
+            return f'REF {self.ref} - {self.bedrooms}-bedroom {self.prop_type} in {self.location}.'
+        elif self.prop_division=="QC":
+            return f'REF {self.ref} - {self.prop_type} in {self.location}.'
+        elif self.prop_division == "ZH":
+            return f'REF {self.ref} - {self.prop_type} in {self.location} for sale.'
+
+    def get_absolute_url(self):
+        return reverse('resproperty_details', args=[str(self.id)])
 
 
 class PropertiesFeatures(models.Model):

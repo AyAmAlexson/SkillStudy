@@ -18,9 +18,27 @@ def currency(value, code):
 @register.filter()
 def num_censor(value: str):
 
-    value=value.replace("1","one")
-    value=value.replace("2", "two")
-    value=value.replace("3", "three")
-    value=value.replace("3", "four")
+    value=find_last_level(value,value)
+    value = value.replace("/"," ")
+    value = value.capitalize()
+    return value
+
+def find_last_level(s:str, prev_s:str):
+    if (s.find("/") == -1):
+        return prev_s
+    else:
+        prev_s=find_last_level(s[s.find("/")+1:],s)
+        return prev_s
+
+@register.filter()
+def minus_ref(value:str):
+    value=str(value)
+    value = value[value.find("-")+2:]
 
     return value
+
+@register.filter()
+def ql_link(value):
+    return f'https://www.quicklets.com.mt/property-detail/{value-199}'
+
+
