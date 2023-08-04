@@ -8,20 +8,38 @@ Real Estate Properties
 {% endblock title %}
 
 {% block content %}
-   <h1>All properties</h1>
-
+   <h1>All properties for {{request.user.username}} </h1>
    <h6>{% current_time '%b %d %Y' %}</h6>
    <h6> {{ resproperties|length }} properties in total </h6>
+       <table style="width:100%" class="table">
+           <hr>
+           <tr>
+           <td>
 
+            <form action=""  align="left">
+            {% if is_not_owner %}
+            <input type="button"  value="Become an owner" onclick="window.location.href='/sign/become_owner/';" style="width:100%"/> <br>
+            {% endif %}
+               {% if is_not_client %}
+            <input type="button"  value="Become a client" onclick="window.location.href='/sign/become_client/';" style="width:100%"/><br>
+            {% endif %}
+               {% if is_not_agent %}
+            <input type="button"  value="Become an agent" onclick="window.location.href='/sign/become_agent/';" style="width:100%"/><br>
+            {% endif %}
+
+   </form>
+            </td>
+           <td>
    {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
    <form action="" method="get" align="right">
        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
        {{ filterset.form.as_p }}
        {# Добавим кнопку отправки данных формы #}
        <input type="submit" value="Quick Search" />
-
-
+</td>
+</tr>
    </form>
+           </table>
    <hr>
    {% if resproperties %}
        <table style="width:100%" class="table">
@@ -81,6 +99,6 @@ Real Estate Properties
        </form>
 <br>
 <br>
-<a href="http://www.nooo.me/"> Noooo! </a>
+<a href="/sign/logout/"> Log Out </a>
 
 {% endblock content %}

@@ -1,16 +1,16 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import ResProperties,Features,PropertiesFeatures
+from .models import ResProperties, Features, PropertiesFeatures
 from django.shortcuts import render
 from datetime import datetime
 
 from .filters import PropertyFilter, PropertyQuickFilter
 from .forms import ResPropertyForm
 from django.urls import reverse_lazy
-
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 
 
 # Create your views here.
-class ResPropertiesList(ListView):
+class ResPropertiesList(LoginRequiredMixin, ListView):
     # Указываем модель, объекты которой мы будем выводить
     model = ResProperties
     # Поле, которое будет использоваться для сортировки объектов
@@ -41,7 +41,6 @@ class ResPropertiesList(ListView):
             selected_ordering = "-" + selected_ordering
         return selected_ordering
 
-
     def get_context_data(self, **kwargs):
         # С помощью super() мы обращаемся к родительским классам
         # и вызываем у них метод get_context_data с теми же аргументами,
@@ -56,16 +55,24 @@ class ResPropertiesList(ListView):
         context['current_order'] = self.get_ordering()
         context['order'] = self.order
         context['filterset'] = self.filterset
+        context['is_not_agent'] = not (self.request.user.groups.filter(name='agents_commercial').exists()
+                                       and self.request.user.groups.filter(name='agents_residential').exists()
+                                       and self.request.user.groups.filter(name='agents_sales').exists()
+                                       )
+        context['is_not_owner'] = not self.request.user.groups.filter(name='owners').exists()
+        context['is_not_client'] = not self.request.user.groups.filter(name='clients').exists()
+        context['is_not_manager'] = not self.request.user.groups.filter(name='managers').exists()
         return context
 
 
-class ResPropertiesDetail(DetailView):
+class ResPropertiesDetail(LoginRequiredMixin, DetailView):
     # Модель всё та же, но мы хотим получать информацию по отдельному товару
     model = ResProperties
     # Используем другой шаблон — product.html
     template_name = 'resproperty.html'
     # Название объекта, в котором будет выбранный пользователем продукт
     context_object_name = 'resproperty'
+
     def get_context_data(self, **kwargs):
         # С помощью super() мы обращаемся к родительским классам
         # и вызываем у них метод get_context_data с теми же аргументами,
@@ -80,45 +87,58 @@ class ResPropertiesDetail(DetailView):
 
         return context
 
-class ResPropertyCreateResidential(CreateView):
+
+class ResPropertyCreateResidential(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     form_class = ResPropertyForm
     model = ResProperties
     template_name = 'resproperties_edit.html'
+    permission_required = ('properties.add_ResProperties',)
+
 
     def form_valid(self, form):
         resproperty = form.save(commit=False)
         resproperty.prop_division = "QL"
         return super().form_valid(form)
-class ResPropertyCreateSales(CreateView):
+
+
+class ResPropertyCreateSales(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     form_class = ResPropertyForm
     model = ResProperties
     template_name = 'resproperties_edit.html'
+    permission_required = ('properties.add_ResProperties',)
 
     def form_valid(self, form):
         resproperty = form.save(commit=False)
         resproperty.prop_division = "ZH"
         return super().form_valid(form)
-class ResPropertyCreateCommercial(CreateView):
+
+
+class ResPropertyCreateCommercial(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     form_class = ResPropertyForm
     model = ResProperties
     template_name = 'resproperties_edit.html'
+    permission_required = ('properties.add_ResProperties',)
 
     def form_valid(self, form):
         resproperty = form.save(commit=False)
         resproperty.prop_division = "QC"
         return super().form_valid(form)
 
-class ResPropertyUpdate(UpdateView):
+
+class ResPropertyUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     form_class = ResPropertyForm
     model = ResProperties
     template_name = 'resproperties_edit.html'
+    permission_required = ('properties.change_ResProperties',)
 
-class ResPropertyDelete(DeleteView):
+
+class ResPropertyDelete(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
     model = ResProperties
     template_name = 'resproperties_delete.html'
     success_url = reverse_lazy('resproperties_list')
+    permission_required = ('properties.delete_ResProperties',)
 
-class ResPropertiesSearch(ListView):
+class ResPropertiesSearch(LoginRequiredMixin, ListView):
     # Указываем модель, объекты которой мы будем выводить
     model = ResProperties
     # Поле, которое будет использоваться для сортировки объектов
@@ -143,11 +163,11 @@ class ResPropertiesSearch(ListView):
             selected_ordering = "-" + selected_ordering
         return selected_ordering
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['time_now'] = datetime.utcnow()
         context['current_order'] = self.get_ordering()
         context['order'] = self.order
         context['filterset'] = self.filterset
+
         return context

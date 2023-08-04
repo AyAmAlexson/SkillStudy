@@ -1,7 +1,10 @@
 from django import forms
-from .models import ResProperties, Features
+from .models import ResProperties, Features, Agents
 from django.core.exceptions import ValidationError
 from .misc import LOCATION_CHOICES
+
+from allauth.account.forms import SignupForm
+from django.contrib.auth.models import Group
 
 class ResPropertyForm(forms.ModelForm):
     ref = forms.NumberInput(attrs={'class': 'form-control'})
@@ -41,3 +44,8 @@ class ResPropertyForm(forms.ModelForm):
                 "ref": "Invalid ref number"
             })
         return cleaned_data
+
+
+
+
+

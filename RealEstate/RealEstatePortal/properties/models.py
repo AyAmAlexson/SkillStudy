@@ -43,7 +43,7 @@ class Agents(models.Model):
         self.save()
 
     def __str__(self):
-        return f'{self.user_id.first_name} {self.user_id.last_name}'
+        return f'{self.user_id.first_name} {self.user_id.last_name} ({self.user_id.username})'
 
 class Owners(models.Model):
     owner_ql_id = models.CharField(max_length=10, unique=True)
@@ -70,6 +70,8 @@ class Clients(models.Model):
     added_by = models.ForeignKey(Agents, on_delete=models.SET_NULL, null=True)
     date_added = models.DateField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
 
 class Features(models.Model):
     prop_feature = models.CharField(max_length=32, unique=True)
@@ -84,15 +86,14 @@ class ResProperties(models.Model):
     prop_type = models.CharField(max_length=25)
     location = models.CharField(max_length=25)
     address = models.TextField(null=True)
-    link = models.URLField(null=True)
     _price = models.FloatField(default=0.0, db_column="Price")
     status = models.CharField(max_length=2, choices=PROP_STATUSES, default='RE')
     status_valid = models.CharField(max_length=25,null=True)
     off_the_market = models.BooleanField(default=False)
-    bedrooms = models.IntegerField()
+    bedrooms = models.IntegerField(default=0)
     bathrooms = models.IntegerField(default=0)
 
-    prop_features = models.ManyToManyField(Features, through='PropertiesFeatures', null=True)
+    prop_features = models.ManyToManyField(Features, through='PropertiesFeatures')
     prop_description = models.TextField(null=True)
 
     date_added = models.DateField(auto_now_add=True)
@@ -112,6 +113,10 @@ class ResProperties(models.Model):
     @property
     def area(self):
         return f'{AREAS_LIST[self.location]}'
+
+    @property
+    def QLlink(self):
+        return f'https://www.quicklets.com.mt/property-detail/{self.ref-199}'
 
     def preview(self):
         return f'REF {self.ref} - {self.bedrooms}-bedroom {self.prop_type} in {self.location}.'
@@ -164,12 +169,17 @@ class PropertiesFeatures(models.Model):
     re_property = models.ForeignKey(ResProperties, on_delete=models.CASCADE)
     re_feature = models.ForeignKey(Features, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.re_property} - {self.re_feature  }'
 
 class Comments(models.Model):
     re_property = models.ForeignKey(ResProperties, on_delete=models.CASCADE)
     added_by = models.ForeignKey(Agents, on_delete=models.SET_NULL, null=True)
     comment = models.TextField()
     added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.comment}. {self.added_by} commented on {self.re_property} on {self.added_on}'
 
 
 class Viewings(models.Model):
@@ -178,6 +188,8 @@ class Viewings(models.Model):
     agent = models.ForeignKey(Agents, on_delete=models.SET_NULL, null=True)
     date = models.DateField(null=True)
 
+    def __str__(self):
+        return f'Viewing {self.re_property.ref} by {self.client} with {self.agent}'
 
 class Contracts(models.Model):
     re_property = models.ForeignKey(ResProperties, on_delete=models.CASCADE)
@@ -191,5 +203,6 @@ class Contracts(models.Model):
     deposit_paid = models.BooleanField(default=False)
     contract_signed = models.BooleanField(default=False)
 
-
+    def __str__(self):
+        return f'Contract re: REF {self.re_property.ref}. Lessor: {self.re_property.owner}, Lessee:{self.client}, Witness:{self.agent}.'
 
