@@ -155,7 +155,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-ACCOUNT_FORMS = {'signup': 'user.models.BasicSignupForm'}
+ACCOUNT_FORMS = {'signup': 'users.forms.BasicSignupForm'}
 
 STATICFILES_DIRS = [
     BASE_DIR / "static"
