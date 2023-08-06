@@ -1,0 +1,103 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+Real Estate Properties
+{% endblock title %}
+
+{% block content %}
+   <h1>All properties for {{request.user.username}} </h1>
+   <h6>{% current_time '%b %d %Y' %}</h6>
+   <h6> {{ resproperties|length }} properties in total </h6>
+       <table style="width:100%" class="table">
+           <hr>
+           <tr>
+           <td>
+            <form action=""  align="left">
+            {% if is_not_owner %}
+            <input type="button"  value="Become an owner" onclick="window.location.href='/users/become_owner/';" style="width:100%"/> <br>
+            {% endif %}
+               {% if is_not_client %}
+            <input type="button"  value="Become a client" onclick="window.location.href='/users/become_client/';" style="width:100%"/><br>
+            {% endif %}
+               {% if is_not_agent %}
+            <input type="button"  value="Become an agent" onclick="window.location.href='/users/become_agent/';" style="width:100%"/><br>
+            {% endif %}
+
+   </form>
+            </td>
+           <td>
+   {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+   <form action="" method="get" align="right">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Quick Search" />
+</td>
+</tr>
+   </form>
+           </table>
+   <hr>
+   {% if resproperties %}
+       <table style="width:100%" class="table">
+           <tr>
+               <th>Division</th>
+               <th>REF (Click to open)</th>
+               <th>Description</th>
+               <th>Price</th>
+               <th>Status</th>
+               <th><a href = "?{% if order == 'desc' %}{% url_replace order='asc' %}{% else %}{% url_replace order='desc' %}{% endif%}">Added on</a> </th>
+           </tr>
+
+           {% for resproperty in resproperties %}
+           <tr>
+
+               <td>{% if resproperty.prop_division == 'QL' %}  For Rent - Residential   {% elif resproperty.prop_division == 'QC' %} For Rent - Commercial {% else %} For Sale {% endif %}</td>
+               <td> <a href="{{ resproperty.id }}" target='_blank'>REF {{resproperty.ref}}</a></td>
+               <td>{{ resproperty|minus_ref }}</td>
+               <td>{{ resproperty.price|currency:"eur" }}</td>
+               <td>{% if resproperty.status == 'AV' %}  Available   {% else %} Contact the Agent {% endif %}</td>
+               <td>{{ resproperty.date_added }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>No properties!</h2>
+   {% endif %}
+
+   {# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number%}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+<br>
+       <form action="" align = "left" width="150">
+           <input type="button"  value="Add Residential Property" onclick="window.location.href='residential/create/';"/>
+           <input type="button"  value="Add Property for Sale" onclick="window.location.href='sales/create/';"/>
+           <input type="button"  value="Add Commercial Property" onclick="window.location.href='commercial/create/';"/>
+       </form>
+<br>
+<br>
+<a href="/accounts/logout/"> Sign Out </a>
+
+{% endblock content %}

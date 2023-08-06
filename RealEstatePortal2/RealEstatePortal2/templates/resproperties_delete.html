@@ -1,0 +1,13 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>Delete Property</h1>
+<hr>
+<form action="" method="post">
+    {% csrf_token %}
+    <p>{{ object }} will be deleted.</p>
+    <p>Confirm?</p>
+    <input type="submit" value="Delete" />
+    <input type="button" value="Cancel" onclick="history.back()">
+</form>
+{% endblock content %}

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-#nce01hgme_i)(qf)10tt#!*39jcjprv!9*87^zfl+d%mryby=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
+    'django_filters',
+    'users',
+    'properties',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -63,7 +67,8 @@ ROOT_URLCONF = 'RealEstatePortal2.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'allauth')],
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,6 +146,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/property/'
+LOGOUT_REDIRECT_URL = LOGIN_URL
 
 SITE_ID = 1
 
