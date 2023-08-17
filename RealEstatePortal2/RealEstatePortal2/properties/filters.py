@@ -19,8 +19,14 @@ class PropertyFilter(FilterSet):
         empty_label="All Locations",
         widget=forms.widgets.Select(attrs={'class':'form-control'})
     )
-    _price_min = django_filters.NumberFilter(field_name='_price',label='Price MIN:', lookup_expr='gt',widget=forms.NumberInput(attrs={'class':'form-control'}))
-    _price_max = django_filters.NumberFilter(field_name='_price',label='Price MAX:', lookup_expr='lt',widget=forms.NumberInput(attrs={'class':'form-control'}))
+    _price_min = django_filters.NumberFilter(field_name='_price',label='Price MIN:', lookup_expr='gte',widget=forms.NumberInput(attrs={'class':'form-control'}))
+    _price_max = django_filters.NumberFilter(field_name='_price',label='Price MAX:', lookup_expr='lte',widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+    bedrooms_min = django_filters.NumberFilter(field_name='bedrooms', label='Bedrooms MIN:', lookup_expr='gte',
+                                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    bedrooms_max = django_filters.NumberFilter(field_name='bedrooms', label='Bedrooms MAX:', lookup_expr='lte',
+                                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
     prop_division = django_filters.ChoiceFilter(choices=PROP_DIVISION_CHOICES, label="Division:",empty_label="All Divisions", widget=forms.Select(attrs={'class':'form-control'}))
     date_added = django_filters.DateFilter(lookup_expr='gt', label="Added after date:", widget=DateInput(
         attrs={'type': 'date', 'placeholder': 'yyyy-mm-dd','class':'form-control'}))
@@ -31,7 +37,16 @@ class PropertyFilter(FilterSet):
         model = ResProperties
        # В fields мы описываем по каким полям модели
        # будет производиться фильтрация.
-        fields = ['prop_division','ref','_price_min','_price_max','location','date_added']
+        fields = [
+            'prop_division',
+            'ref',
+            'location',
+            '_price_min',
+            '_price_max',
+            'bedrooms_min',
+            'bedrooms_max',
+            'date_added'
+        ]
 
 
 

@@ -1,16 +1,19 @@
-{% extends 'flatpages\default.html' %}
+{% extends 'flatpages/default.html' %}
 
 {% block title %}
 {{ flatpage.title }}
 {% endblock title %}
 
-{% block heading %}
-<h1 class="text-white fs-3 fw-bolder">{{ flatpage.title }}</h1>
-<p class="text-white-50 mb-0">Welcome</p>
-{% endblock heading %}
+
 
 {% block content %}
-<h2>{{ flatpage.content }}</h2>
-<p class="lead">An agile professional team at your service. Helping to find your perfect home</p>
-<p class="mb-0">10 steps to find your desired apartment: 1. Call the QL Exiles agent. He will take care of the rest 9 steps.</p>
+<br><br><br><br>
+<h2>An agile professional team at your service<br> Helping to find your perfect home</h2>
+<p class="lead">{{ flatpage.content }}</p>
+<br><br><br><br><br><br><br>
+<form action='processing/logout.php' method='POST' class='inline'>
+    <input type="button"  value="Property Enquiry" onclick="window.location.href=' {% url 'contactus:property_enquiry' %}' " />
+    <input type="button"  value="Property List" onclick="window.location.href='/property/';" />
+    <input type="button"  value="Property Search" onclick="window.location.href='/property/search';" />
+</form>
 {% endblock content %}

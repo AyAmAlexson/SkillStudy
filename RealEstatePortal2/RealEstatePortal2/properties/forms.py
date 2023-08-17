@@ -39,7 +39,7 @@ class ResPropertyForm(forms.ModelForm):
         ref = cleaned_data.get("ref")
         _price = cleaned_data.get("_price")
 
-        if ref is not None and (int(ref) < 200 or int(ref)>200000):
+        if ref is not None and (int(ref) < 200 or int(ref) > 200000):
             raise ValidationError({
                 "ref": "Invalid ref number"
             })

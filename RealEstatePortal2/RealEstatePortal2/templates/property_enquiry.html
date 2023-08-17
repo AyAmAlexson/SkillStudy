@@ -1,0 +1,72 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+
+{% block title %}
+QL Exiles: Property Enquiry
+{% endblock title %}
+{% block content %}
+<br>
+<br>
+<br>
+
+<h2>Property Enquiry</h2>
+<br><br><br>
+
+<form name="inquiry" class="form" id="contact-form" method="post" action="/contactus/property_enquiry/">
+    {% csrf_token %}
+    <div class="row">
+    <div class="col-lg-6">
+        <div class="form-group">
+            <input type="text" name="client_name" placeholder="Name*" class="form-control">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="form-group">
+            <input type="text" name="email" placeholder="Email Address*" class="form-control">
+        </div>
+    </div>
+    <br><br>
+    <div class="col-lg-6">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-lg-4 col-4">
+                    <input type="text" name="phone_code" class="phone-code-input form-control" value="+356" placeholder="+356">
+                </div>
+                <div class="col-lg-8 col-8">
+                    <input type="text" name="phone_number" class="phone-input numberInput form-control" placeholder="Phone No.">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="form-group">
+            <input type="text" name="property_ref" class="numberInput form-control" placeholder="Property Reference No. (Optional)">
+        </div>
+    </div>
+    <br><br>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <textarea placeholder="*Describe your property enquiry: location, number of bedrooms, budget range, move in date, etc." name="comment" class="form-control"></textarea>
+        </div>
+    </div>
+<br><br>
+    <input type="hidden" id="token_contact_form" name="token_contact_form">
+<br><br>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <input name="save" type="submit" value="Submit" id="submit-btn" onclick="return gtag_report_conversion('https://www.quicklets.com.mt/contactus')">
+        </div>
+    </div>
+</div>
+</form>
+
+
+
+
+
+
+
+{% endblock content%}

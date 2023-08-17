@@ -1,15 +1,17 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import ResProperties, Features, PropertiesFeatures
-from django.shortcuts import render
 from datetime import datetime
+
+
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .filters import PropertyFilter, PropertyQuickFilter
 from .forms import ResPropertyForm
-from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from .models import ResProperties
 
 
-# Create your views here.
+
 class ResPropertiesList(LoginRequiredMixin, ListView):
     # Указываем модель, объекты которой мы будем выводить
     model = ResProperties
@@ -55,10 +57,7 @@ class ResPropertiesList(LoginRequiredMixin, ListView):
         context['current_order'] = self.get_ordering()
         context['order'] = self.order
         context['filterset'] = self.filterset
-        context['is_not_agent'] = not self.request.user.groups.filter(name='agents').exists()
-        context['is_not_owner'] = not self.request.user.groups.filter(name='owners').exists()
-        context['is_not_client'] = not self.request.user.groups.filter(name='clients').exists()
-        context['is_not_manager'] = not self.request.user.groups.filter(name='managers').exists()
+
         return context
 
 
@@ -75,22 +74,23 @@ class ResPropertiesDetail(LoginRequiredMixin, DetailView):
         # и вызываем у них метод get_context_data с теми же аргументами,
         # что и были переданы нам.
         # В ответе мы должны получить словарь.
-        context = super().get_context_data(**kwargs)
-        # К словарю добавим текущую дату в ключ 'time_now'.
-        context['time_now'] = datetime.utcnow()
-        # Добавим ещё одну пустую переменную,
-        # чтобы на её примере рассмотреть работу ещё одного фильтра.
-        context['next_sale'] = None
 
+        context = super().get_context_data(**kwargs)
+        property_instance = self.object
+        features = property_instance.prop_features.all()
+        context['features'] = features
         return context
 
+    def get_object(self, queryset=None):
+        ref_oct = self.kwargs['ref_oct']
+        ref = int(ref_oct, 8)  # Преобразование в десятичное число
+        return get_object_or_404(ResProperties, ref=ref)
 
 class ResPropertyCreateResidential(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     form_class = ResPropertyForm
     model = ResProperties
     template_name = 'resproperties_edit.html'
     permission_required = ('properties.add_resproperties',)
-
 
     def form_valid(self, form):
         resproperty = form.save(commit=False)
@@ -128,23 +128,26 @@ class ResPropertyUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView)
     template_name = 'resproperties_edit.html'
     permission_required = ('properties.change_resproperties',)
 
+    def get_object(self, queryset=None):
+        ref_oct = self.kwargs['ref_oct']
+        ref = int(ref_oct, 8)  # Преобразование в десятичное число
+        return get_object_or_404(ResProperties, ref=ref)
 
 class ResPropertyDelete(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
     model = ResProperties
     template_name = 'resproperties_delete.html'
-    success_url = reverse_lazy('resproperties_list')
+    success_url = reverse_lazy('properties:properties_list')
     permission_required = ('properties.delete_resproperties',)
 
+    def get_object(self, queryset=None):
+        ref_oct = self.kwargs['ref_oct']
+        ref = int(ref_oct, 8)  # Преобразование в десятичное число
+        return get_object_or_404(ResProperties, ref=ref)
+
 class ResPropertiesSearch(LoginRequiredMixin, ListView):
-    # Указываем модель, объекты которой мы будем выводить
     model = ResProperties
-    # Поле, которое будет использоваться для сортировки объектов
     ordering = 'ref'
-    # Указываем имя шаблона, в котором будут все инструкции о том,
-    # как именно пользователю должны быть показаны наши объекты
     template_name = 'resproperties_search.html'
-    # Это имя списка, в котором будут лежать все объекты.
-    # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'resproperties_search'
     paginate_by = 10
 
@@ -168,3 +171,9 @@ class ResPropertiesSearch(LoginRequiredMixin, ListView):
         context['filterset'] = self.filterset
 
         return context
+
+
+
+
+
+

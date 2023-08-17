@@ -1,8 +1,40 @@
 PROP_DIVISION_CHOICES = [
     ('QL', 'Residential Lease'),
     ('QC', 'Commercial Lease'),
-    ('ZH', 'Sales'),
+    ('ZH', 'Property Sales'),
 ]
+
+PROP_DIVISION_REFERENCE = {
+    'QL': 'Residential Lease',
+    'QC': 'Commercial Lease',
+    'ZH': 'Sales',
+    'All': 'All',
+}
+
+
+rented = 'RE'
+available = 'AV'
+soon = 'SO'
+to_call = 'TC'
+
+PROP_STATUSES = [
+    (rented, 'Rented'),
+    (available, 'Available'),
+    (soon, 'Coming soon'),
+    (to_call, 'To call'),
+]
+
+residential = 'QL'
+commercial = 'QC'
+sales = 'ZH'
+
+PROP_DIVISION = [
+    (residential, 'Residential'),
+    (commercial, 'Commercial'),
+    (sales, 'Sales'),
+]
+
+
 
 LOCATION_CHOICES = [
     ('Luqa','Luqa'),
@@ -43,13 +75,14 @@ LOCATION_CHOICES = [
     ('Zejtun', 'Zejtun'),
     ('Fgura', 'Fgura'),
     ('Isla', 'Isla'),
+    ("St. Julian's","St. Julian's"),
     ('Zabbar', 'Zabbar'),
     ('Ghaxaq', 'Ghaxaq'),
     ('Xghajra', 'Xghajra'),
     ('Dingli', 'Dingli'),
     ('Rabat', 'Rabat'),
     ('Zurrieq', 'Zurrieq'),
-    ('Gudja', 'Gudja')
+    ('Gudja', 'Gudja'),
 ]
 
 AREAS_LIST= {
@@ -99,3 +132,11 @@ AREAS_LIST= {
     'Zurrieq': 'West',
     'Gudja': 'Airport',
 }
+
+AREAS_CHOICES = [
+    ('Airport', 'Airport'),
+    ('North', 'North'),
+    ('Central', 'Central'),
+    ('South', 'South'),
+    ('West', 'West'),
+]

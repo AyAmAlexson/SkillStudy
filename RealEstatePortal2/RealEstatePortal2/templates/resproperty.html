@@ -5,7 +5,7 @@
 {% load custom_tags %}
 
 
-<!-- Название у нас будет Product -->
+
 {% block title %}
 Real Estate - Property
 {% endblock title %}
@@ -25,8 +25,8 @@ Real Estate - Property
     <h2 align="left">{{ resproperty }}</h2>
     <h5 align="left"> Date added: {{ resproperty.date_added|date:'M d Y'  }}</h5>
     <form action="" align = "left">
-        <input type="button" value="Edit" onclick="window.location.href='{{resproperty.id}}/update/';"/>
-        <input type="button" value="Delete" onclick="window.location.href='{{resproperty.id}}/delete/';"/>
+        <input type="button" value="Edit" onclick="window.location.href='/property/{{resproperty.ref_oct}}/update/';"/>
+        <input type="button" value="Delete" onclick="window.location.href='/property/{{resproperty.ref_oct}}/delete/';"/>
     </form>
 
 
@@ -66,6 +66,13 @@ Real Estate - Property
             <tr>
                 <td align="left">Status:</td>
                 <td align="left">{% if resproperty.status == 'AV' %}  Available   {% else %} Contact the Agent {% endif %}</td>
+            </tr>
+
+            <tr>
+                <td align="left">Features:</td>
+
+                <td align="left">{% for feature in features %} <li> {{ feature.prop_feature }}  {% endfor %}</td>
+
             </tr>
         </table>
 

@@ -1,30 +1,9 @@
 from django.db import models
 from django.urls import reverse
 from users.models import CustomUser
-from .misc import AREAS_LIST
+from .misc import AREAS_LIST, PROP_DIVISION, PROP_STATUSES, PROP_DIVISION_CHOICES, rented, residential, commercial, sales, soon, available, to_call
 from datetime import *
 
-rented = 'RE'
-available = 'AV'
-soon = 'SO'
-to_call = 'TC'
-
-PROP_STATUSES = [
-    (rented, 'Rented'),
-    (available, 'Available'),
-    (soon, 'Coming soon'),
-    (to_call, 'To call'),
-]
-
-residential = 'QL'
-commercial = 'QC'
-sales = 'ZH'
-
-PROP_DIVISION = [
-    (residential, 'Residential'),
-    (commercial, 'Commercial'),
-    (sales, 'Sales'),
-]
 
 
 class Agents(models.Model):
@@ -116,6 +95,10 @@ class ResProperties(models.Model):
     def QLlink(self):
         return f'https://www.quicklets.com.mt/property-detail/{self.ref - 199}'
 
+    @property
+    def ref_oct(self):
+        return str(oct(self.ref))[2:]
+
     def preview(self):
         return f'REF {self.ref} - {self.bedrooms}-bedroom {self.prop_type} in {self.location}.'
 
@@ -160,7 +143,7 @@ class ResProperties(models.Model):
             return f'REF {self.ref} - {self.prop_type} in {self.location} for sale.'
 
     def get_absolute_url(self):
-        return reverse('resproperty_details', args=[str(self.id)])
+        return reverse('properties:property_details', args=[str(self.ref_oct)])
 
 
 class PropertiesFeatures(models.Model):

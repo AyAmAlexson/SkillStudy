@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+{% load custom_tags %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QL Exiles: New Subscription</title>
+</head>
+<body>
+    <p>Dear Mr/Mrs {{customuser.username | cap_case }},</p>
+    <br><br>
+    <p>Thank you for subscription, you will receive updates on the new properties
+        in the category
+        {% if subscription.sub_category == 'QL' %} "Residential Lease"
+        {% elif subscription.sub_category == 'QC' %} "Commercial Lease"
+        {% elif subscription.sub_category == 'ZH' %} "Property Sales"
+        {% elif subscription.sub_category == '' %} "All Properties"
+        {% endif %}
+
+    <br><br>
+    <p> You can change your subscriptions or unsubscribe in your account settings:
+        <a href = 'http://127.0.0.1:8000/users/my_account/'> LINK </a></p>
+    <br><br>
+    <p>Kind Regards,</p>
+    <p>Your QL Exiles Team </p>
+</body>
+</html>

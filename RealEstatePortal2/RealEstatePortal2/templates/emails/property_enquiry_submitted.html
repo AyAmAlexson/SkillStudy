@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>{{ property_enquiry.client_name }}, thank you for your request!</h2>
+    <br><br>
+    <p> Dear Mr/Mrs {{property_enquiry.client_name}}, </p>
+<br>
+    <p> Thank you for your request, your enquiry No {{property_enquiry.id}} has been submitted.</p>
+    <p>Our agent will contact you within 24 hours.</p>
+<br>
+    <p>Your enquiry: {{property_enquiry.comment}}</p>
+<br>
+    <p>Kind Regards,</p>
+    <p>Your QL Exiles Team </p>
+</body>
+</html>

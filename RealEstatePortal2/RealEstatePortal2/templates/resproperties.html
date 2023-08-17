@@ -3,38 +3,51 @@
 {% load custom_filters %}
 {% load custom_tags %}
 
+
+
 {% block title %}
 Real Estate Properties
 {% endblock title %}
 
 {% block content %}
-   <h1>All properties for {{request.user.username}} </h1>
+   <h1>All properties for {{request.user.username | cap_case }} </h1>
    <h6>{% current_time '%b %d %Y' %}</h6>
    <h6> {{ resproperties|length }} properties in total </h6>
        <table style="width:100%" class="table">
            <hr>
            <tr>
            <td>
-            <form action=""  align="left">
-            {% if is_not_owner %}
-            <input type="button"  value="Become an owner" onclick="window.location.href='/users/become_owner/';" style="width:100%"/> <br>
-            {% endif %}
-               {% if is_not_client %}
-            <input type="button"  value="Become a client" onclick="window.location.href='/users/become_client/';" style="width:100%"/><br>
-            {% endif %}
-               {% if is_not_agent %}
-            <input type="button"  value="Become an agent" onclick="window.location.href='/users/become_agent/';" style="width:100%"/><br>
-            {% endif %}
 
-   </form>
             </td>
            <td>
    {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
-   <form action="" method="get" align="right">
-       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
-       {{ filterset.form.as_p }}
-       {# Добавим кнопку отправки данных формы #}
-       <input type="submit" value="Quick Search" />
+<form id="filter-form" method="get" align="right">
+
+    {{ filterset.form.as_p }}
+    <input type="submit" name="action" value="Quick Search" />
+    <input type="submit" name="action" value="Subscribe to Category" />
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var filterForm = document.getElementById('filter-form');
+        var buttons = filterForm.querySelectorAll('[name="action"]');
+
+        buttons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                if (button.value === 'Quick Search') {
+                    e.preventDefault();
+                    filterForm.action = window.location.href;
+                    filterForm.submit();
+                } else if (button.value === 'Subscribe to Category') {
+                    filterForm.action = '{% url 'users:category_subscribe' %}';
+                }
+            });
+        });
+    });
+</script>
+
+
 </td>
 </tr>
    </form>
@@ -55,7 +68,7 @@ Real Estate Properties
            <tr>
 
                <td>{% if resproperty.prop_division == 'QL' %}  For Rent - Residential   {% elif resproperty.prop_division == 'QC' %} For Rent - Commercial {% else %} For Sale {% endif %}</td>
-               <td> <a href="{{ resproperty.id }}" target='_blank'>REF {{resproperty.ref}}</a></td>
+               <td> <a href="{{ resproperty.ref_oct }}" target='_blank'>REF {{resproperty.ref}}</a></td>
                <td>{{ resproperty|minus_ref }}</td>
                <td>{{ resproperty.price|currency:"eur" }}</td>
                <td>{% if resproperty.status == 'AV' %}  Available   {% else %} Contact the Agent {% endif %}</td>

@@ -2,12 +2,13 @@
 
 {% block content %}
 
-
   {% load static %}
   {% load socialaccount %}
   {% get_providers as socialaccount_providers %}
   <body>
-<p>THIS COMES FROM ACCOUNT/LOGIN TEMPLATE</p>
+  <br><br><br>
+    <h1>Sign In</h1>
+    <br>
     <form class="signin" id="signin_form" method="post" action="{% url 'account_login' %}">
         {% csrf_token %}
         {{ form.as_p }}
@@ -27,11 +28,12 @@
     </li>
     {% endfor %}
     {% endif %}
-    <li>
+
       <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}"
 	 href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">{{provider.name}}</a>
-    </li>
+
     {% endfor %}
   </body>
+
 
 {% endblock %}

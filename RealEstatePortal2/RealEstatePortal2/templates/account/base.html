@@ -1,16 +1,9 @@
 {% extends "flatpages/default.html" %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block head_title %}{% endblock %}</title>
-    {% block extra_head %}
-    {% endblock %}
-  </head>
+
+{% block base_content %}
   <body>
-    {% block body %}
-<p>THIS COMES FROM ACCOUNT/BASE TEMPLATE</p>
+    <br><br><br>
+    <h2>Please Sign In / Sign Up to Continue</h2>
     {% if messages %}
     <div>
       <strong>Messages:</strong>
@@ -24,19 +17,20 @@
 
     <div>
       <strong>Menu:</strong>
-      <ul>
+        <br>
         {% if user.is_authenticated %}
-        <li><a href="{% url 'account_email' %}">Change Email</a></li>
-        <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+        <a href="{% url 'account_email' %}">Change Email</a><br>
+        <a href="{% url 'account_logout' %}">Sign Out</a><br>
         {% else %}
-        <li><a href="{% url 'account_login' %}">Sign In</a></li>
-        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+        <a href="{% url 'account_login' %}">Sign In</a><br>
+        <a href="{% url 'account_signup' %}">Sign Up</a><br>
         {% endif %}
-      </ul>
+
     </div>
     {% block content %}
-    {% endblock %}
-    {% endblock %}
+    {% endblock content %}
+
+    {% endblock base_content%}
     {% block extra_body %}
     {% endblock %}
   </body>

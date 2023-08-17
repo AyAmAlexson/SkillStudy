@@ -1,0 +1,89 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block content %}
+<br><br><br>
+
+<h2>Account Details: {{request.user.username | cap_case}}</h2>
+
+<div> Your account settings, parameters and login data </div>
+
+    <h5 align="left"> Date joined: {{ account_details.date_joined|date:'M d Y'  }}</h5>
+    <form action="" align = "left">
+        <input type="button" value="Edit" onclick="window.location.href='my_account/update/';"/>
+        <input type="button" value="Delete Account" onclick="window.location.href='my_account/delete/';"/>
+    </form>
+
+
+<br>
+<br>
+        <table style="width:100%" class="table">
+
+
+            <tr>
+                <td align="left">First Name:</td>
+                <td align="left">{{ account_details.first_name }}</td>
+            </tr>
+            <tr>
+                <td align="left"> Last Name: </td>
+                <td align="left">{{ account_details.last_name }}</td>
+
+            </tr>
+
+            <tr>
+                <td align="left"> Email: </td>
+                <td align="left">{{ account_details.email }}</td>
+
+            </tr>
+
+            <tr>
+                <td align="left">Password:</td>
+                <td align="left">{{ account_details.password | hide_pass }}</td>
+            </tr>
+            <tr>
+                <td align="left">Phone (Mobile):</td>
+                <td align="left">{{ account_details.phone_1 }}</td>
+            </tr>
+            <tr>
+                <td align="left">Phone (Office):</td>
+                <td align="left">{{ account_details.phone_2 }}</td>
+            </tr>
+            <tr>
+                <td align="left">Phone (Home):</td>
+                <td align="left">{{ account_details.phone_3 }}</td>
+            </tr>
+            <tr>
+                {% if account_details.groups  %}
+                <td align="left">Groups:</td>
+                <td align="left">{% for group in groups %} <li> {{ group.name | cap_case }} {% endfor %}</td>
+
+                {% endif %}
+            </tr>
+            <tr>
+                {% if account_details.subscriptions  %}
+                <td align="left">Subscriptions:</td>
+                <td align="left">{% for subscript in subscriptions %} <li> {{ subscript }} {% endfor %}</td>
+
+                {% endif %}
+            </tr>
+        </table>
+
+ <form action=""  align="left">
+
+            {% if is_not_owner %}
+                <input type="button"  value="Become an Owner" onclick="window.location.href='/users/become_owner/';" style="width:30%"/> <br>
+            {% endif %}
+            {% if is_not_client %}
+                <input type="button"  value="Become a Client" onclick="window.location.href='/users/become_client/';" style="width:30%"/><br>
+            {% endif %}
+            {% if is_not_agent %}
+                <input type="button"  value="Become an Agent" onclick="window.location.href='/users/become_agent/';" style="width:30%"/><br>
+            {% endif %}
+
+   </form>
+
+<br><br><br>
+<a href="{% url 'account_logout' %}" class="btn btn-primary">Sign out</a>
+{% endblock %}

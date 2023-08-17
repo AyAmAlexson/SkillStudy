@@ -24,4 +24,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('property/', include('properties.urls')),
     path('users/', include('users.urls')),
+    path('db_update/', include('autoupdate.urls')),
+    path('contactus/', include('contactus.urls')),
 ]

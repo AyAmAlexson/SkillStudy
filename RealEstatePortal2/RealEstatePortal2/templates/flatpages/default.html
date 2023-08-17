@@ -1,11 +1,15 @@
 <!DOCTYPE html>
+{% load custom_filters %}
+{% load custom_tags %}
+
+
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>QuickLets Exiles Branch - Malta</title>
+        <title>QL Exiles - Malta</title>
 
         {% load static %}
 
@@ -16,7 +20,7 @@
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
            <div class="container">
-               <a class="navbar-brand" href="#">QL Exiles Branch</a>
+               <a class="navbar-brand" href="/">QL Exiles Branch</a>
                <button class="navbar-toggler" type="button" data-toggle="collapse"
                        data-target="#navbarResponsive"
                        aria-controls="navbarResponsive" aria-expanded="false"
@@ -26,15 +30,28 @@
                <div class="collapse navbar-collapse" id="navbarResponsive">
                    <ul class="navbar-nav ml-auto">
                        
-    
+
                        <li class="nav-item">
-                           <a class="nav-link" href="/property/">Properties</a>
+                           <a class="nav-link" href="/property/">Property List</a>
                        </li>
                        <li class="nav-item">
-                           <a class="nav-link" href="/property/search/">Search</a>
+                           <a class="nav-link" href="/property/search/">Property Search</a>
+                       </li>
+                       <li class="nav-item">
+                           <a class="nav-link" href="/contactus/property_enquiry/">Property Enquiry</a>
                        </li>
                    </ul>
                </div>
+
+                <div class="nav-item" style="color:white">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'users:account_details' %}"> {{ request.user.username|cap_case }}<a>   |
+                    <a href="{% url 'account_logout' %}">Sign Out</a><br>
+                    {% else %}
+                    <a href="{% url 'account_login' %}">Sign In</a>   |
+                    <a href="{% url 'account_signup' %}">Sign Up</a>
+                    {% endif %}
+                </div>
            </div>
         </nav>
 
@@ -42,9 +59,11 @@
         <div class="container">
            <div class="row">
                <div class="col-lg-12 text-center">
+                   {% block base_content %}
                    {% block content %}
                    {{ flatpage.content }}
                    {% endblock content %}
+                   {% endblock base_content %}
                </div>
            </div>
         </div>

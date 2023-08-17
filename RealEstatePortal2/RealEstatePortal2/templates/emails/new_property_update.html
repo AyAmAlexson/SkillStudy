@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+{% load custom_tags %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QL Exiles: New Property Added</title>
+</head>
+<body>
+    <p>Dear Mr/Mrs {{customuser.username | cap_case }},</p>
+    <br><br>
+    <p>Thank you for subscription, there is a new property in the category
+        {% if category == 'QL' %} "Residential Lease"
+        {% elif category == 'QC' %} "Commercial Lease"
+        {% elif category == 'ZH' %} "Property Sales"
+        {% elif category == '' %} "All Properties"
+        {% endif %}
+    <br><br>
+        <strong>{{ new_property }} </strong>
+    <br>
+    {{ new_property.prop_description }}
+    <br><br>
+    <p> Please visit our website for more details:
+        <a href = 'http://127.0.0.1:8000/{{ new_property.get_absolute_url }}'> DETAILS </a></p>
+
+
+    <p> You can change your subscriptions or unsubscribe in your account settings:
+        <a href = 'http://127.0.0.1:8000/users/my_account/'> LINK </a></p>
+    <br><br>
+    <p>Kind Regards,</p>
+    <p>Your QL Exiles Team </p>
+</body>
+</html>
