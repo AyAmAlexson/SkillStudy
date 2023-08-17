@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'users',
     'properties.apps.PropertiesConfig',
     'django_apscheduler',
-    'autoupdate',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
