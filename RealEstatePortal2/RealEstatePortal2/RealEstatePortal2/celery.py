@@ -10,7 +10,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'sending_new_prop_summary_every_monday_8am': {
         'task': 'properties.tasks.send_weekly_property_updates',
-        'schedule': crontab(hour=11, minute=53, day_of_week='Sunday'),
+        'schedule': crontab(hour=6, minute=00, day_of_week='Monday'),
         #'args': (),
     },
 }
