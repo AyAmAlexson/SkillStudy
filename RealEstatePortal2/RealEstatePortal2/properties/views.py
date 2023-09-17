@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.http import HttpResponse
+from django.views import View
 
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -171,9 +173,6 @@ class ResPropertiesSearch(LoginRequiredMixin, ListView):
         context['filterset'] = self.filterset
 
         return context
-
-
-
 
 
 

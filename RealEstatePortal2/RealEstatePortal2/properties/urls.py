@@ -14,4 +14,5 @@ urlpatterns = [
     path('<str:ref_oct>/update/', ResPropertyUpdate.as_view(), name='property_update'),
     path('<str:ref_oct>/delete/', ResPropertyDelete.as_view(), name='property_delete'),
 
+
 ]
