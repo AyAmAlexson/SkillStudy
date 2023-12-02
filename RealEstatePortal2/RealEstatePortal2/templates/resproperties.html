@@ -3,6 +3,8 @@
 {% load custom_filters %}
 {% load custom_tags %}
 
+{% load i18n %}
+
 
 
 {% block title %}
@@ -10,6 +12,7 @@ Real Estate Properties
 {% endblock title %}
 
 {% block content %}
+
    <h1>All properties for {{request.user.username | cap_case }} </h1>
    <h6>{% current_time '%b %d %Y' %}</h6>
    <h6> {{ resproperties|length }} properties in total </h6>
@@ -50,10 +53,12 @@ Real Estate Properties
 
 </td>
 </tr>
+
    </form>
            </table>
    <hr>
    {% if resproperties %}
+
        <table style="width:100%" class="table">
            <tr>
                <th>Division</th>
@@ -109,6 +114,7 @@ Real Estate Properties
            <input type="button"  value="Add Property for Sale" onclick="window.location.href='sales/create/';"/>
            <input type="button"  value="Add Commercial Property" onclick="window.location.href='commercial/create/';"/>
        </form>
+
 <br>
 <br>
 <a href="/accounts/logout/"> Sign Out </a>

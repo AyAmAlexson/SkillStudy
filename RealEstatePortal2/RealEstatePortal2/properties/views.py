@@ -12,7 +12,13 @@ from .filters import PropertyFilter, PropertyQuickFilter
 from .forms import ResPropertyForm
 from .models import ResProperties
 
+from django.utils.translation import gettext as _  # импортируем функцию для перевода
 
+class Index(View):
+    def get(self, request):
+        string = _('Hello world')
+
+        return HttpResponse(string)
 
 class ResPropertiesList(LoginRequiredMixin, ListView):
     # Указываем модель, объекты которой мы будем выводить
@@ -26,6 +32,9 @@ class ResPropertiesList(LoginRequiredMixin, ListView):
     # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'resproperties'
     paginate_by = 10
+
+
+
 
     def get_queryset(self):
         # Получаем обычный запрос
