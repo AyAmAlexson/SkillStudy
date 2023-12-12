@@ -26,12 +26,6 @@ class Ad(models.Model):
     def get_absolute_url(self):
         return reverse('adboard:detail_ad_view', args=[str(self.id)])
 
-class Comment(models.Model):
-    ad = models.ForeignKey('Ad', on_delete=models.CASCADE)
-    body = models.TextField()
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    date_created = models.DateTimeField(auto_now_add=True)
-
 
 class Response(models.Model):
     ad = models.ForeignKey('Ad', on_delete=models.CASCADE)
