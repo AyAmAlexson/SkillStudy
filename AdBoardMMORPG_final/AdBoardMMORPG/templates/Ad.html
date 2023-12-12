@@ -34,6 +34,21 @@ Ad
         height: 300px; /* Set the desired height */
         width: auto; /* Maintain the aspect ratio */
     }
+    .modern-button {
+        background-color: #ff3545;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .gray-button {
+        background-color: #a0a0a0; /* Серый цвет фона */
+        color: #005555; /* Темно-зеленый цвет текста */
+        font-weight: bold; /* Жирное начертание */
+    }
+
 </style>
 
 <br>
@@ -45,13 +60,24 @@ Ad
             <td>
                 <h2 align="left">{{ ad.title }}</h2>
                 <h5 align="left"> Date added: {{ ad.date_created|date:'M d Y'  }}</h5>
-                {% if ad.author == request.user %}
-
-                <form action="" align = "left">
-
-                    <input type="button" value="Edit" onclick="window.location.href='/adboard/ad/{{ad.id}}/update/';"/>
-                    <input type="button" value="Delete" onclick="window.location.href='/adboard/ad/{{ad.id}}/delete/';"/>
-                </form>
+                <br>
+                {% if request.user.is_authenticated %}
+                    {% if ad.author == request.user %}
+                        <form action="" align = "left">
+                            <input type="button" value="Edit" onclick="window.location.href='/adboard/ad/{{ad.id}}/update/';"/>
+                            <input type="button" value="Delete" onclick="window.location.href='/adboard/ad/{{ad.id}}/delete/';"/>
+                        </form>
+                    {% else %}
+                        {% if not already_responded %}
+                            <form action="" align = "left">
+                                <input type="button" value="I am interested!" onclick="window.location.href='/adboard/ad/{{ad.id}}/response/';" class="modern-button" style="font-weight: bold";/>
+                            </form>
+                        {% else %}
+                            <form action="" align = "left">
+                                <input type="button" value="Response Submitted" onclick="" class="modern-button gray-button" style="font-weight: bold"/>
+                            </form>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
             </td>
             <td align="right">

@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from .forms import AdCreationForm
+from .forms import AdCreationForm, ResponseForm
 from .models import Ad, Image, Video
 
-from Ads.models import Ad, Image, Video
+from .models import Ad, Image, Video, Response
 
-from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from .custommixins import UserIsOwnerMixin
 
@@ -75,6 +75,15 @@ class AdDetailView(DetailView):
         except:
             context['image'] = None
 
+        try:
+            response = Response.objects.get(ad=ad_instance.id)
+            if response:
+                context['already_responded'] = True
+            else:
+                context['already_responded'] = False
+        except:
+            context['already_responded'] = False
+
         return context
 
 
@@ -128,3 +137,31 @@ def ad_views_counter(request):
 
     return redirect(detail_url)
 
+
+class CreateResponseView(LoginRequiredMixin, CreateView):
+    model = Response
+    form_class = ResponseForm
+    template_name = 'create_response.html'
+    success_url = 'success/'
+
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        ad = get_object_or_404(Ad, pk=self.kwargs['pk'])
+        form.instance.ad = ad
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ad = get_object_or_404(Ad, pk=self.kwargs['pk'])
+        context['ad'] = ad  # передаем объект объявления в контекст
+        return context
+
+class SuccessResponseView(LoginRequiredMixin,TemplateView):
+    template_name = 'response_success.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ad = get_object_or_404(Ad, pk=self.kwargs['pk'])
+        context['ad'] = ad  # передаем объект объявления в контекст
+        return context

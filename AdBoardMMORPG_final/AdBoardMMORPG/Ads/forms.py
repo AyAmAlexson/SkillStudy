@@ -1,4 +1,4 @@
-from .models import Ad, Category, Image, Video
+from .models import Ad, Category, Image, Video, Response
 from django import forms
 from embed_video.fields import EmbedVideoFormField
 from markdownx.models import MarkdownxFormField
@@ -50,3 +50,13 @@ class AdCreationForm(forms.ModelForm):
     class Meta:
         model = Ad
         fields = ['title', 'body', 'category', 'image', 'video']
+
+
+class ResponseForm(forms.ModelForm):
+    body = forms.TextInput()
+
+    class Meta:
+        model = Response
+        fields = [
+            'body',
+        ]

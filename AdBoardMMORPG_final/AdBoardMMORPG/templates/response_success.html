@@ -1,0 +1,36 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+
+<section class="normal-breadcrumb set-bg" data-setbg="/static/img/normal-breadcrumb.jpg" style="background-image: url(&quot;/static/img/normal-breadcrumb.jpg&quot;);">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="normal__breadcrumb__text">
+                    <h2> Success! </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br>
+<br>
+<br>
+
+<section class="product spad">
+    <div class="normal__breadcrumb__text">
+        <form action="" method="post">
+            {% csrf_token %}
+
+            <p>Объявление: {{ ad.title }}</p>
+            <br>
+
+            <p>Ваш отклик пользователю {{ ad.author }} отправлен успешно</p>
+
+            <br><br>
+            <input type="button" value="Return" onclick="window.location.href='/adboard/';"/>
+        </form>
+    </div>
+</section>
+{% endblock content %}
