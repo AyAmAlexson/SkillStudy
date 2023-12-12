@@ -1,0 +1,37 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+
+<section class="normal-breadcrumb set-bg" data-setbg="/static/img/normal-breadcrumb.jpg" style="background-image: url(&quot;/static/img/normal-breadcrumb.jpg&quot;);">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="normal__breadcrumb__text">
+                    <h2>Delete this Ad ??? </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br>
+<br>
+<br>
+
+<section class="product spad">
+    <div class="normal__breadcrumb__text">
+        <form action="" method="post">
+            {% csrf_token %}
+
+            <p>{{ object.title }}</p>
+            <br>
+            <p>Ваше объявление будет удалено. Действие будет нельзя отменить.</p>
+            <br>
+            <p>Подтверждаете?</p>
+            <br><br>
+            <input type="submit" value="Delete" />
+            <input type="button" value="Cancel" onclick="history.back()">
+        </form>
+    </div>
+</section>
+{% endblock content %}

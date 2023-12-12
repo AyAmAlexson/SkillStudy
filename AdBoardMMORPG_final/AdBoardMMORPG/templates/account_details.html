@@ -1,0 +1,58 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block content %}
+<br><br><br>
+<div class="normal__breadcrumb__text">
+    <h2>Account Details: {{request.user.username }}</h2>
+    <p> Your account settings, parameters and login data </p>
+</div>
+
+ <section class="blog spad">
+
+    <div class="text-white">
+        <p class="text-white" align="left"> Date joined: {{ account_details.date_joined|date:'M d Y'  }}</p>
+    </div>
+
+</section>
+
+
+<div class="text-white">
+    <div class="normal__breadcrumb__text">
+        <table style="width:100%" class="table">
+
+
+            <tr>
+                <td align="left" class="text-white">First Name:</td>
+                <td align="left" class="text-white">{{ account_details.first_name }}</td>
+            </tr>
+            <tr>
+                <td align="left" class="text-white"> Last Name: </td>
+                <td align="left" class="text-white">{{ account_details.last_name }}</td>
+
+            </tr>
+
+            <tr>
+                <td align="left" class="text-white"> Email: </td>
+                <td align="left" class="text-white">{{ account_details.email }}</td>
+
+            </tr>
+
+            <tr>
+                <td align="left" class="text-white">Password:</td>
+                <td align="left" class="text-white">{{ account_details.password | hide_pass }}</td>
+            </tr>
+            <tr>
+                <td align="left" class="text-white">Phone (Mobile):</td>
+                <td align="left" class="text-white">{{ account_details.phone_1 }}</td>
+            </tr>
+            <tr><td></td><td></td></tr>
+
+
+        </table>
+    </div>
+</div>
+
+<br><br><br>
+<a href="{% url 'account_logout' %}" class="btn btn-primary">Sign out</a>
+{% endblock %}

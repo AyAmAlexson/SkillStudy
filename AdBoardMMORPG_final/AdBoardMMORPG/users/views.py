@@ -26,11 +26,11 @@ class AccountDetailView(UserPassesTestMixin, DetailView):
         context = super().get_context_data(**kwargs)
         account_instance = self.object
         groups = account_instance.groups.all()
-        subscriptions = account_instance.subscriptions.all()
+        #subscriptions = account_instance.subscriptions.all()
         context['groups'] = groups
-        context['subscriptions'] = subscriptions
-        context['is_not_agent'] = not self.request.user.groups.filter(name='agents').exists()
-        context['is_not_owner'] = not self.request.user.groups.filter(name='owners').exists()
-        context['is_not_client'] = not self.request.user.groups.filter(name='clients').exists()
-        context['is_not_manager'] = not self.request.user.groups.filter(name='managers').exists()
+        #context['subscriptions'] = subscriptions
+        #context['is_not_agent'] = not self.request.user.groups.filter(name='agents').exists()
+        #context['is_not_owner'] = not self.request.user.groups.filter(name='owners').exists()
+        #context['is_not_client'] = not self.request.user.groups.filter(name='clients').exists()
+        #context['is_not_manager'] = not self.request.user.groups.filter(name='managers').exists()
         return context

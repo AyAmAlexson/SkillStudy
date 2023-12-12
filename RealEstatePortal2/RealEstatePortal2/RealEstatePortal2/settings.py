@@ -80,7 +80,10 @@ ROOT_URLCONF = 'RealEstatePortal2.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'allauth')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            #os.path.join(BASE_DIR, 'templates', 'allauth')
+        ],
 
         'APP_DIRS': True,
         'OPTIONS': {
@@ -200,12 +203,14 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
+SERVER_EMAIL = env('EMAIL_HOST_USER')
+
 
 ADMINS = [
     ('Andrew Young', env('EMAIL_HOST_USER')),
 
 ]
-SERVER_EMAIL = env('EMAIL_HOST_USER')
+
 
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"

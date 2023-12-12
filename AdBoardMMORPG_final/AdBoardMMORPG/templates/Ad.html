@@ -1,0 +1,108 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% load static %}
+{% load embed_video_tags %}
+
+
+{% block title %}
+Ad
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+
+<style>
+    table {
+        list-style: none;
+        padding: 0;
+        width: 100%;
+
+    }
+
+    td img {
+        height: 200px; /* Set the desired height */
+        width: auto; /* Maintain the aspect ratio */
+    }
+    td div img  {
+        height: 300px; /* Set the desired height */
+        width: auto; /* Maintain the aspect ratio */
+        text-align: right ;
+    }
+    img{
+        height: 300px; /* Set the desired height */
+        width: auto; /* Maintain the aspect ratio */
+    }
+</style>
+
+<br>
+<br>
+
+<div class="text-white">
+    <table>
+        <tr>
+            <td>
+                <h2 align="left">{{ ad.title }}</h2>
+                <h5 align="left"> Date added: {{ ad.date_created|date:'M d Y'  }}</h5>
+                {% if ad.author == request.user %}
+
+                <form action="" align = "left">
+
+                    <input type="button" value="Edit" onclick="window.location.href='/adboard/ad/{{ad.id}}/update/';"/>
+                    <input type="button" value="Delete" onclick="window.location.href='/adboard/ad/{{ad.id}}/delete/';"/>
+                </form>
+                {% endif %}
+            </td>
+            <td align="right">
+                <div>
+                    {% if image %}
+                        <img src="{{ image  }}" alt="{{ ad.title }}">
+                    {% else %}
+                        <img src="{% static 'img/blog/blog-4.jpg' %}" alt="{{ ad.title }}">
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+<br>
+<br>
+        <table style="width:100%" class="table">
+
+            <tr>
+                <td align="left"> <p> Ad Description </p></td>
+                <td align="left"><p>{{ ad.body|safe }}</p></td>
+
+            </tr>
+            <tr>
+                <td align="left"><p>Category:</p></td>
+                <td align="left"><p>{{ ad.category}}</p></td>
+            </tr>
+
+            <tr>
+                <td align="left"> <p>Author:</p> </td>
+                <td align="left"><p>{{ ad.author }}</p></td>
+
+            </tr>
+
+            <tr>
+                <td align="left"><p> Status:</p> </td>
+                <td align="left"><p>{{ ad.status }}</p></td>
+
+            </tr>
+            {% if video %}
+            <tr>
+                <td align="left"><p> Video:</p> </td>
+                <td align="left">
+                    {% video video '800x600' %}
+                </td>
+
+            </tr>
+            {% endif %}
+
+        </table>
+
+</div>
+
+{% endblock content %}

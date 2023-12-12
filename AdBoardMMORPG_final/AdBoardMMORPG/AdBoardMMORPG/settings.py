@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.sites',
+
+    'django.contrib.flatpages',
     'django.contrib.staticfiles',
     'allauth',
     'allauth.account',
@@ -46,9 +48,16 @@ INSTALLED_APPS = [
     # ... include the providers you want to enable:
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'embed_video',
+    'markdownx',
     'users',
     'Ads',
+    'ckeditor',
 ]
+
+DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 SOCIALACCOUNT_PROVIDERS = \
@@ -91,7 +101,7 @@ ROOT_URLCONF = 'AdBoardMMORPG.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'allauth')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,6 +110,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
+
             ],
         },
     },
@@ -162,8 +173,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 STATIC_URL = 'static/'
 LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/adboard/'
+LOGOUT_REDIRECT_URL = LOGIN_URL
 
 SITE_ID = 1
 # Default primary key field type
@@ -175,4 +190,31 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_SSL = False
+EMAIL_USE_TLS = True
+
+SERVER_EMAIL = env('EMAIL_HOST_USER')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CKEDITOR_UPLOAD_PATH = '/media/ad_body_rich_content/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'default',
+        'extraPlugins': ','.join(
+            [
+                'codesnippet','widget','youtube',
+            ]
+        )
+        # Other configuration options...
+    },
+}
