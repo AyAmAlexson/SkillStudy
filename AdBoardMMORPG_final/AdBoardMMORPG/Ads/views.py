@@ -76,7 +76,7 @@ class AdDetailView(DetailView):
             context['image'] = None
 
         try:
-            response = Response.objects.get(ad=ad_instance.id)
+            response = Response.objects.filter(ad=ad_instance.id)
             if response:
                 context['already_responded'] = True
             else:

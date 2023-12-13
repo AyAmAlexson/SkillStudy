@@ -61,6 +61,8 @@ Ad
                 <h2 align="left">{{ ad.title }}</h2>
                 <h5 align="left"> Date added: {{ ad.date_created|date:'M d Y'  }}</h5>
                 <br>
+
+  
                 {% if request.user.is_authenticated %}
                     {% if ad.author == request.user %}
                         <form action="" align = "left">
