@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdBoard MMORPG: New Ad Added</title>
+</head>
+<body>
+    <p>Dear Mr/Mrs {{customuser.username | cap_case }},</p>
+    <br><br>
+    <p>Thank you for subscription, there is a new ad in the category {{category}}
+    <br><br>
+        <strong>{{ ad.title }} </strong>
+    <br>
+
+    <p> Please visit our website for more details:
+        <a href = 'http://127.0.0.1:8000/{{ ad.get_absolute_url }}'> DETAILS </a></p>
+
+
+    <p> You can change your subscriptions or unsubscribe in your account settings:
+        <a href = 'http://127.0.0.1:8000/users/my_account/'> LINK </a></p>
+    <br><br>
+    <p>Kind Regards,</p>
+    <p>Your AdBoard MMORPG Team </p>
+</body>
+</html>

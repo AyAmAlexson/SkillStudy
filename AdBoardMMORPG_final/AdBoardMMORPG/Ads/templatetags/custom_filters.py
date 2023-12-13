@@ -18,3 +18,7 @@ def to_int(value):
 def get(dictionary, key):
     return dictionary.get(key, None)
 
+@register.filter(name="cap_case")
+def cap_case(value: str):
+    return value.capitalize()
+

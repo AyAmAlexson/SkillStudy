@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdBoard MMORPG: New Response to Your Ad</title>
+</head>
+<body>
+    <p>Уважаемый/ая {{ad_author.username | cap_case }},</p>
+    <br><br>
+    <p>Пользователь {{response.author}} оставил новое предложение на ваше объявление: {{ad.title}}
+    <br><br>
+        <strong>{{ response.body }} </strong>
+    <br>
+
+    <p> Вы можете принять или отклонить его на нашем сайте:
+        <a href = 'http://127.0.0.1:8000/{{ ad.get_absolute_url }}'> объявление </a></p>
+
+
+
+    <p>С уважением,</p>
+    <p>Команда AdBoard MMORPG </p>
+</body>
+</html>

@@ -45,13 +45,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # ... include the providers you want to enable:
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     'embed_video',
-    'markdownx',
+    'Ads.apps.AdsConfig',
     'users',
-    'Ads',
     'ckeditor',
 ]
 
@@ -218,3 +216,9 @@ CKEDITOR_CONFIGS = {
         # Other configuration options...
     },
 }
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

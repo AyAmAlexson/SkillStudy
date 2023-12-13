@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdBoard MMORPG: Ad author reviewed your response</title>
+</head>
+<body>
+    <p>Уважаемый/ая {{customuser.username | cap_case }},</p>
+    <br><br>
+        {% if withdrawn %}
+            <p>Вы отменили ваше предложение к объявлению {{ad.title}}: </p>
+            <p>{{response.body}}</p>
+            <br>
+            <p>Перейдите по ссылке на наш сайт, там вас ждет больше объявлений:
+                    <a href = 'http://127.0.0.1:8000/adboard/'> Доска Объявлений </a></p>
+        {% else %}
+            {% if accepted %}
+                <p>Автор объявления {{ad.title}}, принял ваше предложение: </p>
+                <p>{{response.body}}</p>
+                <br>
+                <p>Теперь вы сможете связаться с ним для обсуждения деталей.</p>
+                <p>Перейдите по ссылке на наш сайт:
+                    <a href = 'http://127.0.0.1:8000/{{ ad.get_absolute_url }}'> объявление </a></p>
+            {% else %}
+                <p>К сожалению, автор объявления {{ad.title}}, не принял ваше предложение: </p>
+                <p>{{response.body}}</p>
+                <br>
+                <p>Перейдите по ссылке на наш сайт, там вас ждет больше объявлений:
+                    <a href = 'http://127.0.0.1:8000/adboard/'> Доска Объявлений </a></p>
+            {% endif %}
+        {% endif %}
+    <p>С уважением,</p>
+    <p>Команда AdBoard MMORPG </p>
+</body>
+</html>

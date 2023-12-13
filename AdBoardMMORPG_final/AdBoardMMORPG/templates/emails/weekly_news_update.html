@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdBoard MMORPG: Your weekly news update</title>
+</head>
+<body>
+    <p>Dear Mr/Mrs {{customuser.username | cap_case }},</p>
+    <br>
+    <p>You received this email because you subscribed for the weekly news at AdBoard MMORPG. </p>
+    <p>Your subscription: <strong>{{sub}}</strong> </p>
+    <p>Below you can find the list of news </p>
+
+    <p> You can change your subscriptions or unsubscribe in your account settings:
+        <a href = 'http://127.0.0.1:8000/users/my_account/'> LINK </a></p>
+    <br>
+    <p>Kind Regards,</p>
+    <p>Your AdBoard MMORPG Team </p>
+</body>
+</html>
