@@ -24,7 +24,7 @@ def notify_subscribers_new_ad(pid, created, **kwargs):
             customusers_list = CustomUser.objects.filter(subscriptions__in=subscriptions_list)
             for customuser in customusers_list:
                 html_content = render_to_string(
-                    'emails/new_property_update.html',
+                    'emails/new_ad_update.html',
                     {
                         'category': instance.category,
                         'ad': instance,
