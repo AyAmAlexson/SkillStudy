@@ -46,15 +46,15 @@
                     <div class="header__nav">
                         <nav class="header__menu mobile-menu">
                             <ul>
-                                <li class="active"><a href="{% url 'adboard:ad_feed_view' %}">Homepage</a></li>
-                                <li><a href="./categories.html">Categories <span class="arrow_carrot-down"></span></a>
+                                <li class="active"><a href="{% url 'adboard:ad_feed_view' %}">AdBoard MMORPG</a></li>
+                                <li><a href="/adboard/">Ads <span class="arrow_carrot-down"></span></a>
                                     <ul class="dropdown">
-                                        <li><a href="./categories.html">Categories</a></li>
-                                        <li><a href="./anime-details.html">Anime Details</a></li>
-                                        <li><a href="./anime-watching.html">Anime Watching</a></li>
-                                        <li><a href="./blog-details.html">Blog Details</a></li>
-                                        <li><a href="./accounts/signup">Sign Up</a></li>
-                                        <li><a href="./accounts/login/">Login</a></li>
+                                        <li><a href="/adboard">Categories</a></li>
+                                        <li><a href="/adboard/">My Ads</a></li>
+                                        <li><a href="{% url 'adboard:create_ad_view' %}">Create New Ad</a></li>
+                                        <li><a href="/adboard/">Incoming Responces</a></li>
+                                        <li><a href="/adboard/">Outgoing responses</a></li>
+
                                     </ul>
                                 </li>
                                 <li><a href="{% url 'adboard:create_ad_view' %}">New Ad</a></li>
