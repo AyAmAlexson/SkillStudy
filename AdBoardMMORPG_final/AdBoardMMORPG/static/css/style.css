@@ -114,6 +114,12 @@ li img {
 	width: auto; /* Maintain the aspect ratio */
 }
 
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #ffffff
+}
+
 /*---------------------
   Helper CSS
 -----------------------*/
@@ -933,6 +939,37 @@ li img {
 	-webkit-transition: all, 0.3s;
 	-o-transition: all, 0.3s;
 	transition: all, 0.3s;
+}
+
+.modern-button {
+	background-color: #ff3545;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.gray-button {
+	background-color: #a0a0a0; /* Серый цвет фона */
+	color: #005555; /* Темно-зеленый цвет текста */
+	font-weight: bold; /* Жирное начертание */
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.form-field {
+    flex: 1;
+    margin-right: 20px; /* Добавьте отступ между полями, если нужно */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
 }
 
 .product__pagination a:hover {

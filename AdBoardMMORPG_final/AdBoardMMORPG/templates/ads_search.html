@@ -1,0 +1,170 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load static %}
+
+
+{% block content %}
+
+<style>
+
+.form-row {
+display: flex;
+justify-content: space-between;
+width: 100%;
+}
+
+.form-field {
+    flex: 1;
+    margin-right: 10px; /* Добавьте отступ между полями, если нужно */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+
+
+}
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #ffffff
+}
+
+
+td img {
+    width: 150px; /* Make the image fill the container */
+    height: 150px; /* Make the image fill the container */
+    object-fit: contain; /* Crop or scale as needed */
+}
+
+
+</style>
+
+<div class="text-white">
+<hr><hr><hr><hr>
+
+<div class="col-lg-8 col-md-8 col-sm-8">
+                                <div class="section-title">
+                                    <h4>Ads Search</h4>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4">
+                                <div class="btn__all">
+                                    {# Добавляем пагинацию на страницу #}
+                                    {# Информация о предыдущих страницах #}
+                                    {% if page_obj.has_previous %}
+                                        <a href="?page=1" class="primary-btn" >1</a>
+                                        {% if page_obj.previous_page_number != 1 %}
+                                            ...
+                                            <a href="?page={{ page_obj.previous_page_number }}" class="primary-btn">{{ page_obj.previous_page_number }}</a>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    {# Информация о текущей странице #}
+                                    <span class="text-danger">{{ page_obj.number }} </span>
+
+                                    {# Информация о следующих страницах #}
+                                    {% if page_obj.has_next %}
+                                        <a href="?page={{ page_obj.next_page_number }}" class="primary-btn">{{ page_obj.next_page_number }}</a>
+                                        {% if paginator.num_pages != page_obj.next_page_number %}
+                                            ...
+                                            <a href="?page={{ page_obj.paginator.num_pages }}" class="primary-btn">{{ page_obj.paginator.num_pages }}</a>
+                                        {% endif %}
+                                    {% endif %}
+
+                                </div>
+                            </div>
+<hr>
+
+<form action="" method="get" align="right" >
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="{{ filterset.form.category.id_for_label }}">Category:</label>
+            {{ filterset.form.category }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ filterset.form.search_contents.id_for_label }}">Search Contents:</label>
+            {{ filterset.form.search_contents }}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ filterset.form.date_created.id_for_label }}">Date Created:</label>
+            {{ filterset.form.date_created }}
+        </div>
+    </div>
+    <input type="submit" value="Search" />
+</form>
+
+</div>
+
+<hr>
+   {% if ads_search %}
+       <table style="width:100%" class="table">
+           <tr>
+               <th>Image</th>
+               <th>Title</th>
+               <th>Author</th>
+               <th>Category</th>
+               <th>Status</th>
+               <th><a href = "?{% if order == 'desc' %}{% url_replace order='asc' %}{% else %}{% url_replace order='desc' %}{% endif%}">Added on</a> </th>
+               <th>Action</th>
+           </tr>
+
+           {% for ad in ads_search %}
+           <tr>
+
+               <td>
+                   {% with ad_image=img_list|get:ad.id %}
+                       {% if ad_image %}
+                           <img src="{{ ad_image  }}" alt="{{ ad.title }}">
+                       {% else %}
+                           <img src="{% static 'img/blog/blog-4.jpg' %}" alt="{{ ad.title }}">
+                       {% endif %}
+                   {% endwith %}
+                           </div>
+               </td>
+               <td> <a href="{{ ad.get_absolute_url }}" target='_blank'>{{ad.title}}</a></td>
+               <td>{{ ad.author }}</td>
+               <td>{{ ad.category }}</td>
+               <td>{% if ad.status == 'TR' %}  To Be Reviewed   {% elif ad.status == 'AC' %} Active {% elif ad.status == 'RJ' %} Rejected {% elif ad.status == 'EX' %} Expired {% endif %}</td>
+               <td>{{ ad.date_created }}</td>
+               <td>
+                   <form action="" align = "left">
+                       <input type="button" value="Details" onclick="window.location.href='/{{ ad.get_absolute_url }}';" class="modern-button" style="font-weight: bold";/>
+                   </form>
+               </td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>No ads!</h2>
+   {% endif %}
+
+   {# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number%}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+
+{% endblock content %}
